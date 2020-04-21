@@ -1,0 +1,1033 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+    <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+    <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+    <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+    <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+  </edmx:Reference>
+  <edmx:DataServices>
+    <Schema Namespace="srv.Map" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityContainer Name="EntityContainer">
+        <EntitySet Name="Addresses" EntityType="srv.Map.Addresses">
+          <NavigationPropertyBinding Path="state" Target="States"/>
+          <NavigationPropertyBinding Path="school" Target="Schools"/>
+          <NavigationPropertyBinding Path="assistanceLocation" Target="AssistanceLocations"/>
+        </EntitySet>
+        <EntitySet Name="AssistanceLocations" EntityType="srv.Map.AssistanceLocations">
+          <NavigationPropertyBinding Path="address" Target="Addresses"/>
+          <NavigationPropertyBinding Path="locationType" Target="LocationTypes"/>
+          <NavigationPropertyBinding Path="assistanceOfferings" Target="AssistanceOfferings"/>
+        </EntitySet>
+        <EntitySet Name="AssistanceOfferings" EntityType="srv.Map.AssistanceOfferings">
+          <NavigationPropertyBinding Path="eligiblityCategory" Target="EligiblityCategories"/>
+          <NavigationPropertyBinding Path="assistanceLocation" Target="AssistanceLocations"/>
+          <NavigationPropertyBinding Path="assistanceType" Target="AssistanceTypes"/>
+          <NavigationPropertyBinding Path="assistanceSubType" Target="AssistanceSubTypes"/>
+        </EntitySet>
+        <EntitySet Name="AssistanceSubTypes" EntityType="srv.Map.AssistanceSubTypes">
+          <NavigationPropertyBinding Path="assistanceType" Target="AssistanceTypes"/>
+        </EntitySet>
+        <EntitySet Name="AssistanceTypes" EntityType="srv.Map.AssistanceTypes"/>
+        <EntitySet Name="DeliveryMode_texts" EntityType="srv.Map.DeliveryMode_texts"/>
+        <EntitySet Name="DeliveryModes" EntityType="srv.Map.DeliveryModes">
+          <NavigationPropertyBinding Path="texts" Target="DeliveryMode_texts"/>
+          <NavigationPropertyBinding Path="localized" Target="DeliveryMode_texts"/>
+        </EntitySet>
+        <EntitySet Name="DistrictOfferingAsistance" EntityType="srv.Map.DistrictOfferingAsistance">
+          <NavigationPropertyBinding Path="assistance" Target="AssistanceOfferings"/>
+          <NavigationPropertyBinding Path="district" Target="Districts"/>
+        </EntitySet>
+        <EntitySet Name="Districts" EntityType="srv.Map.Districts">
+          <NavigationPropertyBinding Path="state" Target="States"/>
+          <NavigationPropertyBinding Path="school" Target="Schools"/>
+        </EntitySet>
+        <EntitySet Name="EligiblityCategories" EntityType="srv.Map.EligiblityCategories"/>
+        <EntitySet Name="LocationTypes" EntityType="srv.Map.LocationTypes"/>
+        <EntitySet Name="SchoolOfferingAssistance" EntityType="srv.Map.SchoolOfferingAssistance">
+          <NavigationPropertyBinding Path="assistance" Target="AssistanceOfferings"/>
+          <NavigationPropertyBinding Path="school" Target="Schools"/>
+        </EntitySet>
+        <EntitySet Name="Schools" EntityType="srv.Map.Schools">
+          <NavigationPropertyBinding Path="district" Target="Districts"/>
+          <NavigationPropertyBinding Path="address" Target="Addresses"/>
+          <NavigationPropertyBinding Path="schoolAssistance" Target="SchoolOfferingAssistance"/>
+        </EntitySet>
+        <EntitySet Name="States" EntityType="srv.Map.States">
+          <NavigationPropertyBinding Path="district" Target="Districts"/>
+        </EntitySet>
+        <EntitySet Name="SchoolOffers" EntityType="srv.Map.SchoolOffersParameters"/>
+        <EntitySet Name="assistanceLocationsByDistance" EntityType="srv.Map.assistanceLocationsByDistanceParameters"/>
+        <EntitySet Name="sap4kids" EntityType="srv.Map.sap4kidsParameters"/>
+      </EntityContainer>
+      <EntityType Name="Addresses">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+        <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+        <Property Name="street" Type="Edm.String" MaxLength="100"/>
+        <Property Name="city" Type="Edm.String" MaxLength="50"/>
+        <Property Name="zip" Type="Edm.Int32"/>
+        <Property Name="lat" Type="Edm.Decimal" Scale="15" Precision="23"/>
+        <Property Name="long" Type="Edm.Decimal" Scale="15" Precision="23"/>
+        <NavigationProperty Name="state" Type="srv.Map.States">
+          <ReferentialConstraint Property="state_StateCode" ReferencedProperty="StateCode"/>
+        </NavigationProperty>
+        <NavigationProperty Name="school" Type="Collection(srv.Map.Schools)" Partner="address"/>
+        <NavigationProperty Name="assistanceLocation" Type="Collection(srv.Map.AssistanceLocations)" Partner="address"/>
+        <Property Name="state_StateCode" Type="Edm.String" MaxLength="2"/>
+      </EntityType>
+      <EntityType Name="AssistanceLocations">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+        <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+        <Property Name="name" Type="Edm.String" MaxLength="50"/>
+        <NavigationProperty Name="address" Type="srv.Map.Addresses" Partner="assistanceLocation">
+          <ReferentialConstraint Property="address_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <NavigationProperty Name="locationType" Type="srv.Map.LocationTypes">
+          <ReferentialConstraint Property="locationType_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <NavigationProperty Name="assistanceOfferings" Type="Collection(srv.Map.AssistanceOfferings)" Partner="assistanceLocation"/>
+        <Property Name="address_ID" Type="Edm.Guid"/>
+        <Property Name="locationType_ID" Type="Edm.Guid"/>
+      </EntityType>
+      <EntityType Name="AssistanceOfferings">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="timeFrom" Type="Edm.TimeOfDay"/>
+        <Property Name="timeTo" Type="Edm.TimeOfDay"/>
+        <Property Name="availableMon" Type="Edm.Boolean"/>
+        <Property Name="availableTue" Type="Edm.Boolean"/>
+        <Property Name="availableWed" Type="Edm.Boolean"/>
+        <Property Name="availableThr" Type="Edm.Boolean"/>
+        <Property Name="availableFri" Type="Edm.Boolean"/>
+        <Property Name="availableSat" Type="Edm.Boolean"/>
+        <Property Name="availableSun" Type="Edm.Boolean"/>
+        <Property Name="startDate" Type="Edm.Date"/>
+        <Property Name="endDate" Type="Edm.Date"/>
+        <Property Name="pickupInd" Type="Edm.Boolean"/>
+        <Property Name="deliveryInd" Type="Edm.Boolean"/>
+        <Property Name="virtualInd" Type="Edm.Boolean"/>
+        <Property Name="websiteURL" Type="Edm.String" MaxLength="1000"/>
+        <NavigationProperty Name="eligiblityCategory" Type="srv.Map.EligiblityCategories">
+          <ReferentialConstraint Property="eligiblityCategory_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <Property Name="offerDetails" Type="Edm.String" MaxLength="1000"/>
+        <Property Name="offerApproved" Type="Edm.Boolean"/>
+        <NavigationProperty Name="assistanceLocation" Type="srv.Map.AssistanceLocations" Partner="assistanceOfferings">
+          <ReferentialConstraint Property="assistanceLocation_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <NavigationProperty Name="assistanceType" Type="srv.Map.AssistanceTypes">
+          <ReferentialConstraint Property="assistanceType_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <NavigationProperty Name="assistanceSubType" Type="srv.Map.AssistanceSubTypes">
+          <ReferentialConstraint Property="assistanceSubType_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <Property Name="eligiblityCategory_ID" Type="Edm.Guid"/>
+        <Property Name="assistanceLocation_ID" Type="Edm.Guid"/>
+        <Property Name="assistanceType_ID" Type="Edm.Guid"/>
+        <Property Name="assistanceSubType_ID" Type="Edm.Guid"/>
+      </EntityType>
+      <EntityType Name="AssistanceSubTypes">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="subType" Type="Edm.String" MaxLength="30"/>
+        <NavigationProperty Name="assistanceType" Type="srv.Map.AssistanceTypes">
+          <ReferentialConstraint Property="assistanceType_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <Property Name="description" Type="Edm.String" MaxLength="100"/>
+        <Property Name="assistanceType_ID" Type="Edm.Guid"/>
+      </EntityType>
+      <EntityType Name="AssistanceTypes">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="assistanceType" Type="Edm.String" MaxLength="30"/>
+        <Property Name="description" Type="Edm.String" MaxLength="100"/>
+      </EntityType>
+      <EntityType Name="DeliveryMode_texts">
+        <Key>
+          <PropertyRef Name="locale"/>
+          <PropertyRef Name="code"/>
+        </Key>
+        <Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+        <Property Name="name" Type="Edm.String" MaxLength="255"/>
+        <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+        <Property Name="code" Type="Edm.String" MaxLength="20" Nullable="false"/>
+      </EntityType>
+      <EntityType Name="DeliveryModes">
+        <Key>
+          <PropertyRef Name="code"/>
+        </Key>
+        <Property Name="name" Type="Edm.String" MaxLength="255"/>
+        <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+        <Property Name="code" Type="Edm.String" MaxLength="20" Nullable="false"/>
+        <NavigationProperty Name="texts" Type="Collection(srv.Map.DeliveryMode_texts)">
+          <OnDelete Action="Cascade"/>
+        </NavigationProperty>
+        <NavigationProperty Name="localized" Type="srv.Map.DeliveryMode_texts">
+          <ReferentialConstraint Property="code" ReferencedProperty="code"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="DistrictOfferingAsistance">
+        <Key>
+          <PropertyRef Name="assistance_ID"/>
+          <PropertyRef Name="district_leaid"/>
+        </Key>
+        <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+        <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+        <NavigationProperty Name="assistance" Type="srv.Map.AssistanceOfferings">
+          <ReferentialConstraint Property="assistance_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <NavigationProperty Name="district" Type="srv.Map.Districts">
+          <ReferentialConstraint Property="district_leaid" ReferencedProperty="leaid"/>
+        </NavigationProperty>
+        <Property Name="assistance_ID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="district_leaid" Type="Edm.String" MaxLength="8" Nullable="false"/>
+      </EntityType>
+      <EntityType Name="Districts">
+        <Key>
+          <PropertyRef Name="leaid"/>
+        </Key>
+        <Property Name="leaid" Type="Edm.String" MaxLength="8" Nullable="false"/>
+        <Property Name="name" Type="Edm.String" MaxLength="100"/>
+        <NavigationProperty Name="state" Type="srv.Map.States" Partner="district">
+          <ReferentialConstraint Property="state_StateCode" ReferencedProperty="StateCode"/>
+        </NavigationProperty>
+        <NavigationProperty Name="school" Type="Collection(srv.Map.Schools)" Partner="district"/>
+        <Property Name="state_StateCode" Type="Edm.String" MaxLength="2"/>
+      </EntityType>
+      <EntityType Name="EligiblityCategories">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="eligibilityCategory" Type="Edm.String" MaxLength="50"/>
+        <Property Name="description" Type="Edm.String" MaxLength="100"/>
+      </EntityType>
+      <EntityType Name="LocationTypes">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="locType" Type="Edm.String" MaxLength="30"/>
+        <Property Name="description" Type="Edm.String" MaxLength="100"/>
+      </EntityType>
+      <EntityType Name="SchoolOfferingAssistance">
+        <Key>
+          <PropertyRef Name="assistance_ID"/>
+          <PropertyRef Name="school_ID"/>
+        </Key>
+        <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+        <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+        <NavigationProperty Name="assistance" Type="srv.Map.AssistanceOfferings">
+          <ReferentialConstraint Property="assistance_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <NavigationProperty Name="school" Type="srv.Map.Schools" Partner="schoolAssistance">
+          <ReferentialConstraint Property="school_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <Property Name="assistance_ID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="school_ID" Type="Edm.String" MaxLength="12" Nullable="false"/>
+      </EntityType>
+      <EntityType Name="Schools">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" MaxLength="12" Nullable="false"/>
+        <Property Name="name" Type="Edm.String" MaxLength="100"/>
+        <NavigationProperty Name="district" Type="srv.Map.Districts" Partner="school">
+          <ReferentialConstraint Property="district_leaid" ReferencedProperty="leaid"/>
+        </NavigationProperty>
+        <NavigationProperty Name="address" Type="srv.Map.Addresses" Partner="school">
+          <ReferentialConstraint Property="address_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <NavigationProperty Name="schoolAssistance" Type="Collection(srv.Map.SchoolOfferingAssistance)" Partner="school"/>
+        <Property Name="district_leaid" Type="Edm.String" MaxLength="8"/>
+        <Property Name="address_ID" Type="Edm.Guid"/>
+      </EntityType>
+      <EntityType Name="States">
+        <Key>
+          <PropertyRef Name="StateCode"/>
+        </Key>
+        <Property Name="StateCode" Type="Edm.String" MaxLength="2" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String" MaxLength="50"/>
+        <Property Name="FIPS" Type="Edm.Int32"/>
+        <NavigationProperty Name="district" Type="Collection(srv.Map.Districts)" Partner="state"/>
+      </EntityType>
+      <EntityType Name="SchoolOffersParameters">
+        <Key>
+          <PropertyRef Name="LATITUDE"/>
+          <PropertyRef Name="LONGITUDE"/>
+          <PropertyRef Name="DISTANCEFORSEARCH"/>
+          <PropertyRef Name="ELIGIBILITYCAT"/>
+          <PropertyRef Name="ASSISTSUBTYPE"/>
+        </Key>
+        <Property Name="LATITUDE" Type="Edm.Double" Nullable="false"/>
+        <Property Name="LONGITUDE" Type="Edm.Double" Nullable="false"/>
+        <Property Name="DISTANCEFORSEARCH" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ELIGIBILITYCAT" Type="Edm.String" MaxLength="38" Nullable="false"/>
+        <Property Name="ASSISTSUBTYPE" Type="Edm.String" MaxLength="38" Nullable="false"/>
+        <NavigationProperty Name="Set" Type="Collection(srv.Map.SchoolOffersType)" Partner="Parameters" ContainsTarget="true"/>
+      </EntityType>
+      <EntityType Name="SchoolOffersType">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" MaxLength="36" Nullable="false"/>
+        <Property Name="TIMEFROM" Type="Edm.TimeOfDay"/>
+        <Property Name="TIMETO" Type="Edm.TimeOfDay"/>
+        <Property Name="AVAILABLEMON" Type="Edm.Boolean"/>
+        <Property Name="AVAILABLETUE" Type="Edm.Boolean"/>
+        <Property Name="AVAILABLEWED" Type="Edm.Boolean"/>
+        <Property Name="AVAILABLETHR" Type="Edm.Boolean"/>
+        <Property Name="AVAILABLEFRI" Type="Edm.Boolean"/>
+        <Property Name="AVAILABLESAT" Type="Edm.Boolean"/>
+        <Property Name="AVAILABLESUN" Type="Edm.Boolean"/>
+        <Property Name="STARTDATE" Type="Edm.Date"/>
+        <Property Name="ENDDATE" Type="Edm.Date"/>
+        <Property Name="NAME" Type="Edm.String" MaxLength="50"/>
+        <Property Name="ELIGIBILITYCATEGORY" Type="Edm.String" MaxLength="50"/>
+        <Property Name="DESCRIPTION" Type="Edm.String" MaxLength="100"/>
+        <Property Name="ASSISTANCESUBTYPE" Type="Edm.String" MaxLength="30"/>
+        <Property Name="ADDRESS_ID" Type="Edm.Int32"/>
+        <Property Name="STREET" Type="Edm.String" MaxLength="100"/>
+        <Property Name="CITY" Type="Edm.String" MaxLength="50"/>
+        <Property Name="STATECODE" Type="Edm.String" MaxLength="2"/>
+        <Property Name="ZIP" Type="Edm.Int32"/>
+        <Property Name="LAT" Type="Edm.Decimal" Scale="15" Precision="23"/>
+        <Property Name="LONG" Type="Edm.Decimal" Scale="15" Precision="23"/>
+        <Property Name="LOCATION_ID" Type="Edm.String" MaxLength="36"/>
+        <Property Name="LOCATIONTYPE_ID" Type="Edm.String" MaxLength="36"/>
+        <Property Name="LOCATIONDESCRIPTION" Type="Edm.String" MaxLength="100"/>
+        <Property Name="LOCATIONTYPE" Type="Edm.String" MaxLength="30"/>
+        <Property Name="ASSISTANCETYPE" Type="Edm.String" MaxLength="30"/>
+        <Property Name="ASSISTANCETYPEDESCRIPTION" Type="Edm.String" MaxLength="100"/>
+        <Property Name="PICKUPIND" Type="Edm.Boolean"/>
+        <Property Name="DELIVERYIND" Type="Edm.Boolean"/>
+        <Property Name="WEBSITEURL" Type="Edm.String" MaxLength="1000"/>
+        <Property Name="OFFERDETAILS" Type="Edm.String" MaxLength="1000"/>
+        <Property Name="CONTACTNAME" Type="Edm.String" MaxLength="50"/>
+        <Property Name="CONTACTEMAIL" Type="Edm.String" MaxLength="50"/>
+        <Property Name="CONTACTTITLE" Type="Edm.String" MaxLength="60"/>
+        <NavigationProperty Name="Parameters" Type="srv.Map.SchoolOffersParameters" Partner="Set"/>
+      </EntityType>
+      <EntityType Name="assistanceLocationsByDistanceParameters">
+        <Key>
+          <PropertyRef Name="LATITUDE"/>
+          <PropertyRef Name="LONGITUDE"/>
+          <PropertyRef Name="DISTANCEFORSEARCH"/>
+        </Key>
+        <Property Name="LATITUDE" Type="Edm.Double" Nullable="false"/>
+        <Property Name="LONGITUDE" Type="Edm.Double" Nullable="false"/>
+        <Property Name="DISTANCEFORSEARCH" Type="Edm.Int32" Nullable="false"/>
+        <NavigationProperty Name="Set" Type="Collection(srv.Map.assistanceLocationsByDistanceType)" Partner="Parameters" ContainsTarget="true"/>
+      </EntityType>
+      <EntityType Name="assistanceLocationsByDistanceType">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" MaxLength="36" Nullable="false"/>
+        <Property Name="ADDRESS_ID" Type="Edm.Int32"/>
+        <Property Name="LAT" Type="Edm.Decimal" Scale="15" Precision="23"/>
+        <Property Name="LONG" Type="Edm.Decimal" Scale="15" Precision="23"/>
+        <Property Name="COUNT_LOC" Type="Edm.Int64"/>
+        <NavigationProperty Name="Parameters" Type="srv.Map.assistanceLocationsByDistanceParameters" Partner="Set"/>
+      </EntityType>
+      <EntityType Name="sap4kidsParameters">
+        <Key>
+          <PropertyRef Name="PARAM1"/>
+          <PropertyRef Name="PARAM2"/>
+          <PropertyRef Name="PARAM3"/>
+        </Key>
+        <Property Name="PARAM1" Type="Edm.Double" Nullable="false"/>
+        <Property Name="PARAM2" Type="Edm.Double" Nullable="false"/>
+        <Property Name="PARAM3" Type="Edm.Int32" Nullable="false"/>
+        <NavigationProperty Name="Set" Type="Collection(srv.Map.sap4kidsType)" Partner="Parameters" ContainsTarget="true"/>
+      </EntityType>
+      <EntityType Name="sap4kidsType">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" MaxLength="36" Nullable="false"/>
+        <Property Name="TIMEFROM" Type="Edm.TimeOfDay"/>
+        <Property Name="TIMETO" Type="Edm.TimeOfDay"/>
+        <Property Name="AVAILABLEMON" Type="Edm.Boolean"/>
+        <Property Name="AVAILABLETUE" Type="Edm.Boolean"/>
+        <Property Name="AVAILABLEWED" Type="Edm.Boolean"/>
+        <Property Name="AVAILABLETHR" Type="Edm.Boolean"/>
+        <Property Name="AVAILABLEFRI" Type="Edm.Boolean"/>
+        <Property Name="AVAILABLESAT" Type="Edm.Boolean"/>
+        <Property Name="AVAILABLESUN" Type="Edm.Boolean"/>
+        <Property Name="STARTDATE" Type="Edm.Date"/>
+        <Property Name="ENDDATE" Type="Edm.Date"/>
+        <Property Name="NAME" Type="Edm.String" MaxLength="50"/>
+        <Property Name="ADDRESS_ID" Type="Edm.Int32"/>
+        <Property Name="LOCATIONTYPE_ID" Type="Edm.String" MaxLength="36"/>
+        <Property Name="ELIGIBILITYCATEGORY" Type="Edm.String" MaxLength="50"/>
+        <Property Name="DESCRIPTION" Type="Edm.String" MaxLength="100"/>
+        <Property Name="SUBTYPE" Type="Edm.String" MaxLength="30"/>
+        <Property Name="STREET" Type="Edm.String" MaxLength="100"/>
+        <Property Name="CITY" Type="Edm.String" MaxLength="50"/>
+        <Property Name="ZIP" Type="Edm.Int32"/>
+        <Property Name="LAT" Type="Edm.Decimal" Scale="15" Precision="23"/>
+        <Property Name="LONG" Type="Edm.Decimal" Scale="15" Precision="23"/>
+        <NavigationProperty Name="Parameters" Type="srv.Map.sap4kidsParameters" Partner="Set"/>
+      </EntityType>
+      <Annotations Target="srv.Map.Addresses/createdAt">
+        <Annotation Term="Common.Label" String="Created On"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="srv.Map.Addresses/createdBy">
+        <Annotation Term="Common.Label" String="Created By"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Description" String="A user's unique ID"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="srv.Map.Addresses/modifiedAt">
+        <Annotation Term="Common.Label" String="Changed On"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="srv.Map.Addresses/modifiedBy">
+        <Annotation Term="Common.Label" String="Changed By"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Description" String="A user's unique ID"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="srv.Map.Addresses/street">
+        <Annotation Term="Common.Label" String="Street"/>
+      </Annotations>
+      <Annotations Target="srv.Map.Addresses/city">
+        <Annotation Term="Common.Label" String="City"/>
+      </Annotations>
+      <Annotations Target="srv.Map.Addresses/zip">
+        <Annotation Term="Common.Label" String="Zip"/>
+      </Annotations>
+      <Annotations Target="srv.Map.Addresses/lat">
+        <Annotation Term="Common.Label" String="Latitude"/>
+      </Annotations>
+      <Annotations Target="srv.Map.Addresses/long">
+        <Annotation Term="Common.Label" String="Longitude"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceLocations/createdAt">
+        <Annotation Term="Common.Label" String="Created On"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceLocations/createdBy">
+        <Annotation Term="Common.Label" String="Created By"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Description" String="A user's unique ID"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceLocations/modifiedAt">
+        <Annotation Term="Common.Label" String="Changed On"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceLocations/modifiedBy">
+        <Annotation Term="Common.Label" String="Changed By"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Description" String="A user's unique ID"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceLocations/name">
+        <Annotation Term="Common.Label" String="Assistance Location"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceLocations/address">
+        <Annotation Term="Common.Label" String="Address"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceLocations/locationType">
+        <Annotation Term="Common.Label" String="Location Type"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceLocations/address_ID">
+        <Annotation Term="Common.Label" String="Address"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceLocations/locationType_ID">
+        <Annotation Term="Common.Label" String="Location Type"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/createdAt">
+        <Annotation Term="Common.Label" String="Created On"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/modifiedAt">
+        <Annotation Term="Common.Label" String="Changed On"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/timeFrom">
+        <Annotation Term="Common.Label" String="Time From"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/timeTo">
+        <Annotation Term="Common.Label" String="Time To"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/availableMon">
+        <Annotation Term="Common.Label" String="Monday Availability"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/availableTue">
+        <Annotation Term="Common.Label" String="Tuesday Availability"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/availableWed">
+        <Annotation Term="Common.Label" String="Wednesday Availability"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/availableThr">
+        <Annotation Term="Common.Label" String="Thursday Availability"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/availableFri">
+        <Annotation Term="Common.Label" String="Friday Availability"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/availableSat">
+        <Annotation Term="Common.Label" String="Saturday Availability"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/availableSun">
+        <Annotation Term="Common.Label" String="Sunday Availability"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/startDate">
+        <Annotation Term="Common.Label" String="Offering Start Date"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/endDate">
+        <Annotation Term="Common.Label" String="Offering End Date"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/pickupInd">
+        <Annotation Term="Common.Label" String="Indicates Pickup"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/deliveryInd">
+        <Annotation Term="Common.Label" String="Indicates Delivery"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/virtualInd">
+        <Annotation Term="Common.Label" String="Virtual Offering"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/websiteURL">
+        <Annotation Term="Common.Label" String="URL Associated with resource being offered"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/eligiblityCategory">
+        <Annotation Term="Common.Label" String="Indicates category of eligiblity"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/offerDetails">
+        <Annotation Term="Common.Label" String="Misc offer notes"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/offerApproved">
+        <Annotation Term="Common.Label" String="Indicates if offer has been approved"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/assistanceLocation">
+        <Annotation Term="Common.Label" String="Assistance Location"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/assistanceType">
+        <Annotation Term="Common.Label" String="Assistance Type"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/assistanceSubType">
+        <Annotation Term="Common.Label" String="Assistance Sub Type"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/eligiblityCategory_ID">
+        <Annotation Term="Common.Label" String="Indicates category of eligiblity"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/assistanceLocation_ID">
+        <Annotation Term="Common.Label" String="Assistance Location"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/assistanceType_ID">
+        <Annotation Term="Common.Label" String="Assistance Type"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceOfferings/assistanceSubType_ID">
+        <Annotation Term="Common.Label" String="Assistance Sub Type"/>
+      </Annotations>
+      <Annotations Target="srv.Map.EntityContainer/AssistanceSubTypes">
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceSubTypes/subType">
+        <Annotation Term="Common.Label" String="AssistanceSubType"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceSubTypes/assistanceType">
+        <Annotation Term="Common.Label" String="Assistance Type"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceSubTypes/description">
+        <Annotation Term="Common.Label" String="Assitance Sub Type Description"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceSubTypes/assistanceType_ID">
+        <Annotation Term="Common.Label" String="Assistance Type"/>
+      </Annotations>
+      <Annotations Target="srv.Map.EntityContainer/AssistanceTypes">
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceTypes/assistanceType">
+        <Annotation Term="Common.Label" String="Assistance Type"/>
+      </Annotations>
+      <Annotations Target="srv.Map.AssistanceTypes/description">
+        <Annotation Term="Common.Label" String="Assistance Type Description"/>
+      </Annotations>
+      <Annotations Target="srv.Map.DeliveryMode_texts/name">
+        <Annotation Term="Common.Label" String="Name"/>
+      </Annotations>
+      <Annotations Target="srv.Map.DeliveryMode_texts/descr">
+        <Annotation Term="Common.Label" String="Description"/>
+      </Annotations>
+      <Annotations Target="srv.Map.DeliveryModes">
+        <Annotation Term="UI.Identification">
+          <Collection>
+            <Path>name</Path>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="srv.Map.EntityContainer/DeliveryModes">
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="srv.Map.DeliveryModes/name">
+        <Annotation Term="Common.Label" String="Name"/>
+      </Annotations>
+      <Annotations Target="srv.Map.DeliveryModes/descr">
+        <Annotation Term="Common.Label" String="Description"/>
+      </Annotations>
+      <Annotations Target="srv.Map.DistrictOfferingAsistance/createdAt">
+        <Annotation Term="Common.Label" String="Created On"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="srv.Map.DistrictOfferingAsistance/createdBy">
+        <Annotation Term="Common.Label" String="Created By"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Description" String="A user's unique ID"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="srv.Map.DistrictOfferingAsistance/modifiedAt">
+        <Annotation Term="Common.Label" String="Changed On"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="srv.Map.DistrictOfferingAsistance/modifiedBy">
+        <Annotation Term="Common.Label" String="Changed By"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Description" String="A user's unique ID"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="srv.Map.EntityContainer/Districts">
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="srv.Map.Districts/leaid">
+        <Annotation Term="Common.Label" String="Local Education Agency ID"/>
+      </Annotations>
+      <Annotations Target="srv.Map.Districts/name">
+        <Annotation Term="Common.Label" String="District Name"/>
+      </Annotations>
+      <Annotations Target="srv.Map.Districts/state">
+        <Annotation Term="Common.Label" String="State"/>
+      </Annotations>
+      <Annotations Target="srv.Map.Districts/state_StateCode">
+        <Annotation Term="Common.Label" String="State"/>
+      </Annotations>
+      <Annotations Target="srv.Map.EntityContainer/EligiblityCategories">
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="srv.Map.EligiblityCategories/eligibilityCategory">
+        <Annotation Term="Common.Label" String="Eligibility Type"/>
+      </Annotations>
+      <Annotations Target="srv.Map.EligiblityCategories/description">
+        <Annotation Term="Common.Label" String="Description of Eligiblity Categories"/>
+      </Annotations>
+      <Annotations Target="srv.Map.EntityContainer/LocationTypes">
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="srv.Map.LocationTypes/locType">
+        <Annotation Term="Common.Label" String="Type of Location"/>
+      </Annotations>
+      <Annotations Target="srv.Map.LocationTypes/description">
+        <Annotation Term="Common.Label" String="Description of Location"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOfferingAssistance/createdAt">
+        <Annotation Term="Common.Label" String="Created On"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOfferingAssistance/createdBy">
+        <Annotation Term="Common.Label" String="Created By"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Description" String="A user's unique ID"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOfferingAssistance/modifiedAt">
+        <Annotation Term="Common.Label" String="Changed On"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOfferingAssistance/modifiedBy">
+        <Annotation Term="Common.Label" String="Changed By"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Description" String="A user's unique ID"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="srv.Map.EntityContainer/Schools">
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="srv.Map.Schools/ID">
+        <Annotation Term="Common.Label" String="School Identifier"/>
+      </Annotations>
+      <Annotations Target="srv.Map.Schools/name">
+        <Annotation Term="Common.Label" String="School Name"/>
+      </Annotations>
+      <Annotations Target="srv.Map.Schools/district">
+        <Annotation Term="Common.Label" String="LEAID District ID"/>
+      </Annotations>
+      <Annotations Target="srv.Map.Schools/address">
+        <Annotation Term="Common.Label" String="School Address"/>
+      </Annotations>
+      <Annotations Target="srv.Map.Schools/district_leaid">
+        <Annotation Term="Common.Label" String="LEAID District ID"/>
+      </Annotations>
+      <Annotations Target="srv.Map.Schools/address_ID">
+        <Annotation Term="Common.Label" String="School Address"/>
+      </Annotations>
+      <Annotations Target="srv.Map.EntityContainer/States">
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="srv.Map.States/StateCode">
+        <Annotation Term="Common.Label" String="State Code"/>
+      </Annotations>
+      <Annotations Target="srv.Map.States/Name">
+        <Annotation Term="Common.Label" String="name of state"/>
+      </Annotations>
+      <Annotations Target="srv.Map.States/FIPS">
+        <Annotation Term="Common.Label" String="FIPS ID"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/ID">
+        <Annotation Term="Common.Label" String="ID"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/TIMEFROM">
+        <Annotation Term="Common.Label" String="TIMEFROM: TIMEFROM"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/TIMETO">
+        <Annotation Term="Common.Label" String="TIMETO: TIMETO"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/AVAILABLEMON">
+        <Annotation Term="Common.Label" String="AVAILABLEMON: AVAILABLEMON"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/AVAILABLETUE">
+        <Annotation Term="Common.Label" String="AVAILABLETUE: AVAILABLETUE"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/AVAILABLEWED">
+        <Annotation Term="Common.Label" String="AVAILABLEWED: AVAILABLEWED"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/AVAILABLETHR">
+        <Annotation Term="Common.Label" String="AVAILABLETHR: AVAILABLETHR"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/AVAILABLEFRI">
+        <Annotation Term="Common.Label" String="AVAILABLEFRI: AVAILABLEFRI"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/AVAILABLESAT">
+        <Annotation Term="Common.Label" String="AVAILABLESAT: AVAILABLESAT"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/AVAILABLESUN">
+        <Annotation Term="Common.Label" String="AVAILABLESUN: AVAILABLESUN"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/STARTDATE">
+        <Annotation Term="Common.Label" String="STARTDATE: STARTDATE"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/ENDDATE">
+        <Annotation Term="Common.Label" String="ENDDATE: ENDDATE"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/NAME">
+        <Annotation Term="Common.Label" String="NAME: NAME"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/ELIGIBILITYCATEGORY">
+        <Annotation Term="Common.Label" String="ELIGIBILITYCATEGORY"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/DESCRIPTION">
+        <Annotation Term="Common.Label" String="DESCRIPTION"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/ASSISTANCESUBTYPE">
+        <Annotation Term="Common.Label" String="Assistance SubType"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/ADDRESS_ID">
+        <Annotation Term="Common.Label" String="ADDRESS_ID: ADDRESS_ID"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/STREET">
+        <Annotation Term="Common.Label" String="STREET"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/CITY">
+        <Annotation Term="Common.Label" String="CITY"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/STATECODE">
+        <Annotation Term="Common.Label" String="State"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/ZIP">
+        <Annotation Term="Common.Label" String="ZIP"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/LAT">
+        <Annotation Term="Common.Label" String="LAT"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/LONG">
+        <Annotation Term="Common.Label" String="LONG"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/LOCATION_ID">
+        <Annotation Term="Common.Label" String="Location ID"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/LOCATIONTYPE_ID">
+        <Annotation Term="Common.Label" String="LOCATIONTYPE_ID"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/LOCATIONDESCRIPTION">
+        <Annotation Term="Common.Label" String="Location Description"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/LOCATIONTYPE">
+        <Annotation Term="Common.Label" String="Location Type"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/ASSISTANCETYPE">
+        <Annotation Term="Common.Label" String="Assitance Type"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/ASSISTANCETYPEDESCRIPTION">
+        <Annotation Term="Common.Label" String="AssistanceTypeDescription"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/PICKUPIND">
+        <Annotation Term="Common.Label" String="Pickup Indicator"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/DELIVERYIND">
+        <Annotation Term="Common.Label" String="Delivery Indicator"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/WEBSITEURL">
+        <Annotation Term="Common.Label" String="Offer Website"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/OFFERDETAILS">
+        <Annotation Term="Common.Label" String="Offer Details"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/CONTACTNAME">
+        <Annotation Term="Common.Label" String="Contact Name"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/CONTACTEMAIL">
+        <Annotation Term="Common.Label" String="Contact Email"/>
+      </Annotations>
+      <Annotations Target="srv.Map.SchoolOffersType/CONTACTTITLE">
+        <Annotation Term="Common.Label" String="Contact Title"/>
+      </Annotations>
+      <Annotations Target="srv.Map.assistanceLocationsByDistanceType/ID">
+        <Annotation Term="Common.Label" String="Assistance Location ID"/>
+      </Annotations>
+      <Annotations Target="srv.Map.assistanceLocationsByDistanceType/ADDRESS_ID">
+        <Annotation Term="Common.Label" String="ADDRESS_ID: ADDRESS_ID"/>
+      </Annotations>
+      <Annotations Target="srv.Map.assistanceLocationsByDistanceType/LAT">
+        <Annotation Term="Common.Label" String="LAT"/>
+      </Annotations>
+      <Annotations Target="srv.Map.assistanceLocationsByDistanceType/LONG">
+        <Annotation Term="Common.Label" String="LONG"/>
+      </Annotations>
+      <Annotations Target="srv.Map.assistanceLocationsByDistanceType/COUNT_LOC">
+        <Annotation Term="Common.Label" String="Funny Field from Abhay"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/ID">
+        <Annotation Term="Common.Label" String="ID"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/TIMEFROM">
+        <Annotation Term="Common.Label" String="TIMEFROM: TIMEFROM"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/TIMETO">
+        <Annotation Term="Common.Label" String="TIMETO: TIMETO"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/AVAILABLEMON">
+        <Annotation Term="Common.Label" String="AVAILABLEMON: AVAILABLEMON"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/AVAILABLETUE">
+        <Annotation Term="Common.Label" String="AVAILABLETUE: AVAILABLETUE"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/AVAILABLEWED">
+        <Annotation Term="Common.Label" String="AVAILABLEWED: AVAILABLEWED"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/AVAILABLETHR">
+        <Annotation Term="Common.Label" String="AVAILABLETHR: AVAILABLETHR"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/AVAILABLEFRI">
+        <Annotation Term="Common.Label" String="AVAILABLEFRI: AVAILABLEFRI"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/AVAILABLESAT">
+        <Annotation Term="Common.Label" String="AVAILABLESAT: AVAILABLESAT"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/AVAILABLESUN">
+        <Annotation Term="Common.Label" String="AVAILABLESUN: AVAILABLESUN"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/STARTDATE">
+        <Annotation Term="Common.Label" String="STARTDATE: STARTDATE"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/ENDDATE">
+        <Annotation Term="Common.Label" String="ENDDATE: ENDDATE"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/NAME">
+        <Annotation Term="Common.Label" String="NAME: NAME"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/ADDRESS_ID">
+        <Annotation Term="Common.Label" String="ADDRESS_ID: ADDRESS_ID"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/LOCATIONTYPE_ID">
+        <Annotation Term="Common.Label" String="LOCATIONTYPE_ID"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/ELIGIBILITYCATEGORY">
+        <Annotation Term="Common.Label" String="ELIGIBILITYCATEGORY"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/DESCRIPTION">
+        <Annotation Term="Common.Label" String="DESCRIPTION"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/SUBTYPE">
+        <Annotation Term="Common.Label" String="SUBTYPE"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/STREET">
+        <Annotation Term="Common.Label" String="STREET"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/CITY">
+        <Annotation Term="Common.Label" String="CITY"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/ZIP">
+        <Annotation Term="Common.Label" String="ZIP"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/LAT">
+        <Annotation Term="Common.Label" String="LAT"/>
+      </Annotations>
+      <Annotations Target="srv.Map.sap4kidsType/LONG">
+        <Annotation Term="Common.Label" String="LONG"/>
+      </Annotations>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>
