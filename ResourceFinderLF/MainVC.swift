@@ -9,6 +9,7 @@
 import UIKit
 import MapKit
 import SAPFiori
+import SAPOData
 
 struct Detail {
     var title: String
@@ -36,17 +37,14 @@ class MainVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        locationManager = CLLocationManager()
-        locationManager?.delegate = self
+        setupView()
         
-        getUserLocation()
-        
-        mapView.register(FioriMarker.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
-        placePin()
-        
-        setupDetailPanel()
-        
-        //TODO: Center map over america
+        //TODO: Add Search Bar
+        //TODO: Add Directions to Detail with FioriButton
+        //TODO: Get real data from backend
+        //TODO: Add modal for first time use + get location
+        //TODO: Timeline cells?
+        //TODO: Fullscreen map
     }
     
     // Ensures that the detail panel is present whenever the map view appears.
@@ -61,30 +59,49 @@ class MainVC: UIViewController {
         presentedViewController?.dismiss(animated: false, completion: nil)
     }
     
-    private func getUserLocation() {
-        if CLLocationManager.locationServicesEnabled(), CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
-            //Get Current Location
-            mapView.showsUserLocation = true
-            self.userLocation = mapView.userLocation.location?.coordinate
+    //MARK: Private Methods
+    
+    private func setupView() {
+        mapView.register(FioriMarker.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
+        
+        locationManager = CLLocationManager()
+        locationManager?.delegate = self
+        
+        setupDetailPanel()
+        
+        //Check if we are allowed to have the user's location
+        if let location = getUserLocation() {
+            self.userLocation = location
+            centerMap(location: location, zoom: 0.005)
         } else {
+            //Center Map on U.S.
+            let USCenter = CLLocationCoordinate2D(latitude: 39.829219, longitude: -98.579394)
+            centerMap(location: USCenter, zoom: 50)
             //Request Location
             locationManager?.requestWhenInUseAuthorization()
         }
+        
+        let schoolLocation = CLLocationCoordinate2D(latitude: 43.204192, longitude: -77.593500)
+        placePin(title: "BROOKVIEW SCHOOL", location: schoolLocation)
     }
     
-    private func placePin() {
-        let location = CLLocationCoordinate2D(latitude: 43.204192, longitude: -77.593500)
-        
-        //Place Annotation
+    //Return User Location if enabled
+    private func getUserLocation() -> CLLocationCoordinate2D? {
+        if CLLocationManager.locationServicesEnabled(),
+            CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
+            if let userLocation = locationManager?.location?.coordinate {
+                return userLocation
+            }
+        }
+        return nil
+    }
+    
+    //Place annotation pin at location
+    private func placePin(title: String, location: CLLocationCoordinate2D) {
         let annotation = MKPointAnnotation()
         annotation.coordinate = location
-        annotation.title = "BROOKVIEW SCHOOL"
+        annotation.title = title
         self.mapView.addAnnotation(annotation)
-        
-        //Center Map
-        let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-        let region = MKCoordinateRegion(center: location, span: span)
-        self.mapView.setRegion(region, animated: true)
     }
     
     private class FioriMarker: FUIMarkerAnnotationView {
@@ -106,18 +123,26 @@ class MainVC: UIViewController {
 
         // Configure the table view in the detail panel to use a custom cell type for map details.
         detailPanel.content.tableView.register(FUIObjectTableViewCell.self, forCellReuseIdentifier:  FUIObjectTableViewCell.reuseIdentifier)
-        //(FUIMapDetailTagObjectTableViewCell.self, forCellReuseIdentifier: FUIMapDetailTagObjectTableViewCell.reuseIdentifier)
 
         // This view controller will supply the data for the detail panel's table view.
         detailPanel.content.tableView.dataSource = self
         detailPanel.content.tableView.delegate = self
         detailPanel.content.headlineText = "BROOKVIEW SCHOOL"
         detailPanel.content.subheadlineText = "300 BROOKVIEW DR, ROCHESTER, NY"
-        //let view = UIView()
-        //view.backgroundColor = UIColor.systemRed
-        //view.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
-        //detailPanel.content.view = view
         detailPanel.isSearchEnabled = false
+    }
+    
+    private func centerMap(location: CLLocationCoordinate2D, zoom: Double) {
+        let span = MKCoordinateSpan(latitudeDelta: zoom, longitudeDelta: zoom)
+        let region = MKCoordinateRegion(center: location, span: span)
+        self.mapView.setRegion(region, animated: true)
+    }
+    
+    //MARK: Backend Calls
+    private func fetchSchoolOfferings() {
+        //https://sap4good-dev-sap4kids-srv.cfapps.us10.hana.ondemand.com/map/SchoolOffers(LATITUDE=37.703,LONGITUDE=-85.213,DISTANCEFORSEARCH=500,ELIGIBILITYCAT=%27%27%2736a00731-7f07-42a8-a141-f4303d41a10b%27%27%27,ASSISTSUBTYPE=%27%27%2703487ac3-e0db-43af-852b-2ebf198e3a0f%27%27%27)/Set
+        //SchoolOfferingAssistance
+        //let query = DataQuery()
     }
     
 
@@ -141,19 +166,12 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
         
         let detail = details[indexPath.row]
         
-        //detailCell.tags = ["Germany", "Europe"]
+        detailCell.backgroundColor = UIColor.clear
         detailCell.headlineText = detail.title
         detailCell.subheadlineText = detail.subTitle
-        //detailCell.footnoteText = "footnote"
-        //detailCell.substatusText = "substatus"
-        //let color = FUIColorStyle.map1
-            //.preferredFioriColor(forStyle: .map1)
         detailCell.tintColor = .preferredFioriColor(forStyle: .map1)
         detailCell.detailImage = detail.image
-
-        // Fiori includes a library of icons, such as a clock indicator.
-        //detailCell.statusImage = FUIIconLibrary.indicator.clock.withRenderingMode(.alwaysTemplate)
-
+        
         return detailCell
     }
     
