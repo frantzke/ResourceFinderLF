@@ -47,6 +47,7 @@
 		C2C6FA92C03EC41AA9BB274E /* Sap4kidsType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC963D690DCF903D1CE6008E /* Sap4kidsType.swift */; };
 		CBCA7A991E3778A9001AF49E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CBCA7A9B1E3778A9001AF49E /* Main.storyboard */; };
 		D667DA1410428BD0AA07AC57 /* DistrictOfferingAsistance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13401BBB15230186ADF536E6 /* DistrictOfferingAsistance.swift */; };
+		D708A27D244F803100C967A8 /* MainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D708A27C244F803100C967A8 /* MainVC.swift */; };
 		EE326CC45C7EA533F61C963E /* Addresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2016C8F4783729B37EBBA1C1 /* Addresses.swift */; };
 		EE4900C8C243F658542F69D0 /* Schools.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEEFB5587CFDB9240706B68D /* Schools.swift */; };
 		F06E51B6CEF22739B6BCBF78 /* EntityContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F53EDA36F4CD9C2E27090E /* EntityContainer.swift */; };
@@ -122,6 +123,7 @@
 		AB91F8C8F8CDA6E466E5736C /* EntityContainerMetadata.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EntityContainerMetadata.swift; path = "Proxy Classes/public/EntityContainerMetadata.swift"; sourceTree = "<group>"; };
 		AC963D690DCF903D1CE6008E /* Sap4kidsType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Sap4kidsType.swift; path = "Proxy Classes/public/Sap4kidsType.swift"; sourceTree = "<group>"; };
 		CB909D801E38CA8800218154 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D708A27C244F803100C967A8 /* MainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainVC.swift; sourceTree = "<group>"; };
 		DC716D2198A7979D3DFFE9D0 /* SchoolOffersParameters.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SchoolOffersParameters.swift; path = "Proxy Classes/public/SchoolOffersParameters.swift"; sourceTree = "<group>"; };
 		E3A0DB9485EE12ECF627C6AD /* EligiblityCategories.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EligiblityCategories.swift; path = "Proxy Classes/public/EligiblityCategories.swift"; sourceTree = "<group>"; };
 		E547F1E742F4A7CEE8A0A6BC /* DeliveryModeTexts.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DeliveryModeTexts.swift; path = "Proxy Classes/public/DeliveryModeTexts.swift"; sourceTree = "<group>"; };
@@ -218,12 +220,9 @@
 		7A1315B71D4B982000A5DA56 /* ResourceFinderLF */ = {
 			isa = PBXGroup;
 			children = (
-				7A1315B81D4B982000A5DA56 /* AppDelegate.swift */,
-				CBCA7A9B1E3778A9001AF49E /* Main.storyboard */,
-				7A1315C11D4B982000A5DA56 /* Assets.xcassets */,
-				7A1315C31D4B982000A5DA56 /* LaunchScreen.storyboard */,
-				1277F7601F8E66AC0060AF58 /* SAPLogo@2x.png */,
-				7A1315C61D4B982000A5DA56 /* Info.plist */,
+				D708A279244F7F9300C967A8 /* Controllers */,
+				D708A27A244F7FA800C967A8 /* Views */,
+				D708A27B244F7FC000C967A8 /* SupportFiles */,
 				B529B5FECD10D490F680C5E2 /* Proxy Classes */,
 			);
 			path = ResourceFinderLF;
@@ -257,6 +256,34 @@
 				2B640996B41344A03D606E70 /* internal */,
 			);
 			name = "Proxy Classes";
+			sourceTree = "<group>";
+		};
+		D708A279244F7F9300C967A8 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				D708A27C244F803100C967A8 /* MainVC.swift */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		D708A27A244F7FA800C967A8 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CBCA7A9B1E3778A9001AF49E /* Main.storyboard */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		D708A27B244F7FC000C967A8 /* SupportFiles */ = {
+			isa = PBXGroup;
+			children = (
+				7A1315B81D4B982000A5DA56 /* AppDelegate.swift */,
+				7A1315C11D4B982000A5DA56 /* Assets.xcassets */,
+				7A1315C31D4B982000A5DA56 /* LaunchScreen.storyboard */,
+				1277F7601F8E66AC0060AF58 /* SAPLogo@2x.png */,
+				7A1315C61D4B982000A5DA56 /* Info.plist */,
+			);
+			name = SupportFiles;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -422,6 +449,7 @@
 				A4576FA0296011FDA4DB1A1C /* AssistanceLocationsByDistanceParameters.swift in Sources */,
 				8C07A9D329B67C0AC80D5314 /* Districts.swift in Sources */,
 				ABF3B29A806E37EBEEF504D4 /* EntityContainerMetadataChanges.swift in Sources */,
+				D708A27D244F803100C967A8 /* MainVC.swift in Sources */,
 				0617E1F9E7036557F0707DCA /* EligiblityCategories.swift in Sources */,
 				0895CC6AC9C9D69D6ED12FEC /* DeliveryModeTexts.swift in Sources */,
 				4C94BE5411977F095606B194 /* DeliveryModes.swift in Sources */,
