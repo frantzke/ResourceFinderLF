@@ -10,15 +10,28 @@ import UIKit
 import MapKit
 import SAPFiori
 
+struct Detail {
+    var title: String
+    var subTitle: String
+    var image: UIImage?
+}
+
 class MainVC: UIViewController {
+    
+    //MARK: Properties
+    @IBOutlet weak var mapView: MKMapView!
     
     var locationManager: CLLocationManager?
     var userLocation: CLLocationCoordinate2D?
     var detailPanel: FUIMapDetailPanel!
-
     
-    //MARK: Properties
-    @IBOutlet weak var mapView: MKMapView!
+    var details: [Detail] = [
+        Detail(title: "How", subTitle: "Pickup", image: UIImage(systemName: "questionmark.circle.fill")),
+        Detail(title: "Who", subTitle: "Students and Siblings under age 18", image: UIImage(systemName: "person.circle.fill")),
+        Detail(title: "Breakfast (M, Tu, W, Th, F)", subTitle: "11:00 AM - 1:00 PM", image: UIImage(systemName: "clock.fill")),
+        Detail(title: "Lunch (M, Tu, W, Th, F)", subTitle: "11:00 AM - 1:00 PM", image: UIImage(systemName: "clock.fill")),
+        
+    ]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -120,20 +133,23 @@ extension MainVC: MKMapViewDelegate {
 }
 extension MainVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return details.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let detailCell = tableView.dequeueReusableCell(withIdentifier: FUIObjectTableViewCell.reuseIdentifier, for: indexPath) as! FUIObjectTableViewCell
-
+        
+        let detail = details[indexPath.row]
         
         //detailCell.tags = ["Germany", "Europe"]
-        detailCell.headlineText = "How"
-        detailCell.subheadlineText = "Pickup"
+        detailCell.headlineText = detail.title
+        detailCell.subheadlineText = detail.subTitle
         //detailCell.footnoteText = "footnote"
         //detailCell.substatusText = "substatus"
-        detailCell.detailImage = UIImage(systemName: "questionmark.circle.fill")
-        //FUIIconLibrary
+        //let color = FUIColorStyle.map1
+            //.preferredFioriColor(forStyle: .map1)
+        detailCell.tintColor = .preferredFioriColor(forStyle: .map1)
+        detailCell.detailImage = detail.image
 
         // Fiori includes a library of icons, such as a clock indicator.
         //detailCell.statusImage = FUIIconLibrary.indicator.clock.withRenderingMode(.alwaysTemplate)
