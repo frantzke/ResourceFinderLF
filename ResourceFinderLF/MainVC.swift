@@ -8,11 +8,14 @@
 
 import UIKit
 import MapKit
+import SAPFiori
 
 class MainVC: UIViewController {
     
     var locationManager: CLLocationManager?
     var userLocation: CLLocationCoordinate2D?
+    var detailPanel: FUIMapDetailPanel!
+
     
     //MARK: Properties
     @IBOutlet weak var mapView: MKMapView!
@@ -25,7 +28,24 @@ class MainVC: UIViewController {
         
         getUserLocation()
         
+        mapView.register(FioriMarker.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
+        placePin()
+        
+        setupDetailPanel()
+        
         //TODO: Center map over america
+    }
+    
+    // Ensures that the detail panel is present whenever the map view appears.
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        detailPanel.presentContainer()
+    }
+
+    // Dismisses the detail panel whenever the map view disappears.
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        presentedViewController?.dismiss(animated: false, completion: nil)
     }
     
     private func getUserLocation() {
@@ -39,7 +59,89 @@ class MainVC: UIViewController {
         }
     }
     
+    private func placePin() {
+        let location = CLLocationCoordinate2D(latitude: 43.204192, longitude: -77.593500)
+        
+        //Place Annotation
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = location
+        annotation.title = "BROOKVIEW SCHOOL"
+        self.mapView.addAnnotation(annotation)
+        
+        //Center Map
+        let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+        let region = MKCoordinateRegion(center: location, span: span)
+        self.mapView.setRegion(region, animated: true)
+    }
+    
+    private class FioriMarker: FUIMarkerAnnotationView {
 
+        // Override the annotation property to customize it whenever it is set.
+        override var annotation: MKAnnotation? {
+            willSet {
+                markerTintColor = .preferredFioriColor(forStyle: .map1)
+                glyphImage = FUIIconLibrary.map.marker.cafe.withRenderingMode(.alwaysTemplate)
+                //glyphImage = FUIIconLibrary.map.marker.venue.withRenderingMode(.alwaysTemplate)
+                displayPriority = .defaultHigh
+            }
+        }
+    }
+    
+    private func setupDetailPanel() {
+        mapView.delegate = self
+        detailPanel = FUIMapDetailPanel(parentViewController: self, mapView: mapView)
+
+        // Configure the table view in the detail panel to use a custom cell type for map details.
+        detailPanel.content.tableView.register(FUIObjectTableViewCell.self, forCellReuseIdentifier:  FUIObjectTableViewCell.reuseIdentifier)
+        //(FUIMapDetailTagObjectTableViewCell.self, forCellReuseIdentifier: FUIMapDetailTagObjectTableViewCell.reuseIdentifier)
+
+        // This view controller will supply the data for the detail panel's table view.
+        detailPanel.content.tableView.dataSource = self
+        detailPanel.content.tableView.delegate = self
+        detailPanel.content.headlineText = "BROOKVIEW SCHOOL"
+        detailPanel.content.subheadlineText = "300 BROOKVIEW DR, ROCHESTER, NY"
+        //let view = UIView()
+        //view.backgroundColor = UIColor.systemRed
+        //view.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
+        //detailPanel.content.view = view
+        detailPanel.isSearchEnabled = false
+    }
+    
+
+}
+extension MainVC: MKMapViewDelegate {
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        detailPanel.pushChildViewController()
+    }
+
+    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
+        detailPanel.popChildViewController()
+    }
+}
+extension MainVC: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let detailCell = tableView.dequeueReusableCell(withIdentifier: FUIObjectTableViewCell.reuseIdentifier, for: indexPath) as! FUIObjectTableViewCell
+
+        
+        //detailCell.tags = ["Germany", "Europe"]
+        detailCell.headlineText = "How"
+        detailCell.subheadlineText = "Pickup"
+        //detailCell.footnoteText = "footnote"
+        //detailCell.substatusText = "substatus"
+        detailCell.detailImage = UIImage(systemName: "questionmark.circle.fill")
+        //FUIIconLibrary
+
+        // Fiori includes a library of icons, such as a clock indicator.
+        //detailCell.statusImage = FUIIconLibrary.indicator.clock.withRenderingMode(.alwaysTemplate)
+
+        return detailCell
+    }
+    
+    
 }
 extension MainVC: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
