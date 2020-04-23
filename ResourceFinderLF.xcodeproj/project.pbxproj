@@ -51,6 +51,8 @@
 		D708A27D244F803100C967A8 /* MainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D708A27C244F803100C967A8 /* MainVC.swift */; };
 		D7A33AAC2452070C00494AC9 /* SchoolOfferManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A33AAB2452070C00494AC9 /* SchoolOfferManager.swift */; };
 		D7A33AAF24520EA000494AC9 /* SchoolOffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A33AAE24520EA000494AC9 /* SchoolOffer.swift */; };
+		D7A33AB72452257700494AC9 /* ResourceFinderLFTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A33AB62452257700494AC9 /* ResourceFinderLFTests.swift */; };
+		D7A33ABF245225E100494AC9 /* SchoolOfferManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A33ABE245225E100494AC9 /* SchoolOfferManagerTests.swift */; };
 		EE326CC45C7EA533F61C963E /* Addresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2016C8F4783729B37EBBA1C1 /* Addresses.swift */; };
 		EE4900C8C243F658542F69D0 /* Schools.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEEFB5587CFDB9240706B68D /* Schools.swift */; };
 		F06E51B6CEF22739B6BCBF78 /* EntityContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F53EDA36F4CD9C2E27090E /* EntityContainer.swift */; };
@@ -60,6 +62,13 @@
 
 /* Begin PBXContainerItemProxy section */
 		7A5744B821DE553700E58C7F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A1315AD1D4B982000A5DA56 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A1315B41D4B982000A5DA56;
+			remoteInfo = ResourceFinderLF;
+		};
+		D7A33AB92452257700494AC9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7A1315AD1D4B982000A5DA56 /* Project object */;
 			proxyType = 1;
@@ -131,6 +140,10 @@
 		D708A27C244F803100C967A8 /* MainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainVC.swift; sourceTree = "<group>"; };
 		D7A33AAB2452070C00494AC9 /* SchoolOfferManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolOfferManager.swift; sourceTree = "<group>"; };
 		D7A33AAE24520EA000494AC9 /* SchoolOffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolOffer.swift; sourceTree = "<group>"; };
+		D7A33AB42452257700494AC9 /* ResourceFinderLFTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ResourceFinderLFTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D7A33AB62452257700494AC9 /* ResourceFinderLFTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceFinderLFTests.swift; sourceTree = "<group>"; };
+		D7A33AB82452257700494AC9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D7A33ABE245225E100494AC9 /* SchoolOfferManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolOfferManagerTests.swift; sourceTree = "<group>"; };
 		DC716D2198A7979D3DFFE9D0 /* SchoolOffersParameters.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SchoolOffersParameters.swift; path = "Proxy Classes/public/SchoolOffersParameters.swift"; sourceTree = "<group>"; };
 		E3A0DB9485EE12ECF627C6AD /* EligiblityCategories.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EligiblityCategories.swift; path = "Proxy Classes/public/EligiblityCategories.swift"; sourceTree = "<group>"; };
 		E547F1E742F4A7CEE8A0A6BC /* DeliveryModeTexts.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DeliveryModeTexts.swift; path = "Proxy Classes/public/DeliveryModeTexts.swift"; sourceTree = "<group>"; };
@@ -155,6 +168,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		7A5744B021DE553600E58C7F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D7A33AB12452257700494AC9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -221,6 +241,7 @@
 				7A16F06C1FD1B3C700D2FABD /* README.md */,
 				7A1315B71D4B982000A5DA56 /* ResourceFinderLF */,
 				7A5744B421DE553600E58C7F /* UITests */,
+				D7A33AB52452257700494AC9 /* ResourceFinderLFTests */,
 				7A1315B61D4B982000A5DA56 /* Products */,
 				7A1315CC1D4B990B00A5DA56 /* Frameworks */,
 				335E423D737D86031E0749F9 /* Pods */,
@@ -232,6 +253,7 @@
 			children = (
 				7A1315B51D4B982000A5DA56 /* ResourceFinderLF.app */,
 				7A5744B321DE553600E58C7F /* UITests.xctest */,
+				D7A33AB42452257700494AC9 /* ResourceFinderLFTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -324,6 +346,16 @@
 			name = Models;
 			sourceTree = "<group>";
 		};
+		D7A33AB52452257700494AC9 /* ResourceFinderLFTests */ = {
+			isa = PBXGroup;
+			children = (
+				D7A33AB62452257700494AC9 /* ResourceFinderLFTests.swift */,
+				D7A33AB82452257700494AC9 /* Info.plist */,
+				D7A33ABE245225E100494AC9 /* SchoolOfferManagerTests.swift */,
+			);
+			path = ResourceFinderLFTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -367,13 +399,31 @@
 			productReference = 7A5744B321DE553600E58C7F /* UITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		D7A33AB32452257700494AC9 /* ResourceFinderLFTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D7A33ABB2452257700494AC9 /* Build configuration list for PBXNativeTarget "ResourceFinderLFTests" */;
+			buildPhases = (
+				D7A33AB02452257700494AC9 /* Sources */,
+				D7A33AB12452257700494AC9 /* Frameworks */,
+				D7A33AB22452257700494AC9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D7A33ABA2452257700494AC9 /* PBXTargetDependency */,
+			);
+			name = ResourceFinderLFTests;
+			productName = ResourceFinderLFTests;
+			productReference = D7A33AB42452257700494AC9 /* ResourceFinderLFTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		7A1315AD1D4B982000A5DA56 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1010;
+				LastSwiftUpdateCheck = 1140;
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = SAP;
 				TargetAttributes = {
@@ -385,6 +435,10 @@
 					7A5744B221DE553600E58C7F = {
 						CreatedOnToolsVersion = 10.1;
 						ProvisioningStyle = Automatic;
+						TestTargetID = 7A1315B41D4B982000A5DA56;
+					};
+					D7A33AB32452257700494AC9 = {
+						CreatedOnToolsVersion = 11.4;
 						TestTargetID = 7A1315B41D4B982000A5DA56;
 					};
 				};
@@ -405,6 +459,7 @@
 			targets = (
 				7A1315B41D4B982000A5DA56 /* ResourceFinderLF */,
 				7A5744B221DE553600E58C7F /* UITests */,
+				D7A33AB32452257700494AC9 /* ResourceFinderLFTests */,
 			);
 		};
 /* End PBXProject section */
@@ -423,6 +478,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		7A5744B121DE553600E58C7F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D7A33AB22452257700494AC9 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -557,6 +619,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D7A33AB02452257700494AC9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D7A33ABF245225E100494AC9 /* SchoolOfferManagerTests.swift in Sources */,
+				D7A33AB72452257700494AC9 /* ResourceFinderLFTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -564,6 +635,11 @@
 			isa = PBXTargetDependency;
 			target = 7A1315B41D4B982000A5DA56 /* ResourceFinderLF */;
 			targetProxy = 7A5744B821DE553700E58C7F /* PBXContainerItemProxy */;
+		};
+		D7A33ABA2452257700494AC9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7A1315B41D4B982000A5DA56 /* ResourceFinderLF */;
+			targetProxy = D7A33AB92452257700494AC9 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -814,6 +890,61 @@
 			};
 			name = Release;
 		};
+		D7A33ABC2452257700494AC9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = A55Y64N724;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = ResourceFinderLFTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = lukas.frantzke.ResourceFinderLFTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ResourceFinderLF.app/ResourceFinderLF";
+			};
+			name = Debug;
+		};
+		D7A33ABD2452257700494AC9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = A55Y64N724;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = ResourceFinderLFTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = lukas.frantzke.ResourceFinderLFTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ResourceFinderLF.app/ResourceFinderLF";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -840,6 +971,15 @@
 			buildConfigurations = (
 				7A5744BA21DE553700E58C7F /* Debug */,
 				7A5744BB21DE553700E58C7F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D7A33ABB2452257700494AC9 /* Build configuration list for PBXNativeTarget "ResourceFinderLFTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D7A33ABC2452257700494AC9 /* Debug */,
+				D7A33ABD2452257700494AC9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
