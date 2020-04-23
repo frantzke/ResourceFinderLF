@@ -30,8 +30,7 @@ class MainVC: UIViewController {
         Detail(title: "How", subTitle: "Pickup", image: UIImage(systemName: "questionmark.circle.fill")),
         Detail(title: "Who", subTitle: "Students and Siblings under age 18", image: UIImage(systemName: "person.circle.fill")),
         Detail(title: "Breakfast (M, Tu, W, Th, F)", subTitle: "11:00 AM - 1:00 PM", image: UIImage(systemName: "clock.fill")),
-        Detail(title: "Lunch (M, Tu, W, Th, F)", subTitle: "11:00 AM - 1:00 PM", image: UIImage(systemName: "clock.fill")),
-        
+        Detail(title: "Lunch (M, Tu, W, Th, F)", subTitle: "11:00 AM - 1:00 PM", image: UIImage(systemName: "clock.fill"))
     ]
     
     override func viewDidLoad() {
@@ -45,6 +44,7 @@ class MainVC: UIViewController {
         //TODO: Add modal for first time use + get location
         //TODO: Timeline cells?
         //TODO: Fullscreen map
+        //TODO: Find Relevant results. (Future or current)
     }
     
     // Ensures that the detail panel is present whenever the map view appears.
@@ -62,6 +62,7 @@ class MainVC: UIViewController {
     //MARK: Private Methods
     
     private func setupView() {
+        mapView.delegate = self
         mapView.register(FioriMarker.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
         
         locationManager = CLLocationManager()
@@ -118,18 +119,25 @@ class MainVC: UIViewController {
     }
     
     private func setupDetailPanel() {
-        mapView.delegate = self
         detailPanel = FUIMapDetailPanel(parentViewController: self, mapView: mapView)
 
-        // Configure the table view in the detail panel to use a custom cell type for map details.
-        detailPanel.content.tableView.register(FUIObjectTableViewCell.self, forCellReuseIdentifier:  FUIObjectTableViewCell.reuseIdentifier)
-
-        // This view controller will supply the data for the detail panel's table view.
+        // Setup Content
         detailPanel.content.tableView.dataSource = self
         detailPanel.content.tableView.delegate = self
+        detailPanel.content.tableView.register(FUIObjectTableViewCell.self, forCellReuseIdentifier:  FUIObjectTableViewCell.reuseIdentifier)
+        detailPanel.searchResults.tableView.estimatedRowHeight = 60
+        detailPanel.searchResults.tableView.rowHeight = UITableView.automaticDimension
         detailPanel.content.headlineText = "BROOKVIEW SCHOOL"
         detailPanel.content.subheadlineText = "300 BROOKVIEW DR, ROCHESTER, NY"
-        detailPanel.isSearchEnabled = false
+        
+        // Setup Search
+        self.detailPanel.isSearchEnabled = true
+        self.detailPanel.searchResults.tableView.dataSource = self
+        self.detailPanel.searchResults.tableView.delegate = self
+        self.detailPanel.searchResults.tableView.register(FUIObjectTableViewCell.self, forCellReuseIdentifier: FUIObjectTableViewCell.reuseIdentifier)
+        self.detailPanel.searchResults.tableView.estimatedRowHeight = 60
+        self.detailPanel.searchResults.tableView.rowHeight = UITableView.automaticDimension
+        self.detailPanel.searchResults.searchBar.delegate = self
     }
     
     private func centerMap(location: CLLocationCoordinate2D, zoom: Double) {
@@ -138,10 +146,29 @@ class MainVC: UIViewController {
         self.mapView.setRegion(region, animated: true)
     }
     
+    private func setContentCell(cell: FUIObjectTableViewCell, detail: Detail) -> FUIObjectTableViewCell{
+        cell.backgroundColor = UIColor.clear
+        cell.headlineText = detail.title
+        cell.subheadlineText = detail.subTitle
+        cell.tintColor = .preferredFioriColor(forStyle: .map1)
+        cell.detailImage = detail.image
+        return cell
+    }
+    
+//    private func setSearchCell(cell: FUIObjectTableViewCell, searchResult: ) {
+//
+//    }
+    
     //MARK: Backend Calls
     private func fetchSchoolOfferings() {
         //https://sap4good-dev-sap4kids-srv.cfapps.us10.hana.ondemand.com/map/SchoolOffers(LATITUDE=37.703,LONGITUDE=-85.213,DISTANCEFORSEARCH=500,ELIGIBILITYCAT=%27%27%2736a00731-7f07-42a8-a141-f4303d41a10b%27%27%27,ASSISTSUBTYPE=%27%27%2703487ac3-e0db-43af-852b-2ebf198e3a0f%27%27%27)/Set
         //SchoolOfferingAssistance
+        
+//        let serviceEndpoint = URL(string: "https://sap4good-dev-sap4kids-srv.cfapps.us10.hana.ondemand.com/map")!
+//        let provider = OnlineODataProvider(serviceRoot: serviceEndpoint)
+
+        //initialize OData service from the generated proxy class with the provider.
+        
         //let query = DataQuery()
     }
     
@@ -158,23 +185,48 @@ extension MainVC: MKMapViewDelegate {
 }
 extension MainVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return details.count
+        if tableView == self.detailPanel.searchResults.tableView {
+            return 0
+        } else {
+            return details.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let detailCell = tableView.dequeueReusableCell(withIdentifier: FUIObjectTableViewCell.reuseIdentifier, for: indexPath) as! FUIObjectTableViewCell
+        if tableView == self.detailPanel.content.tableView {
+            let detailCell = tableView.dequeueReusableCell(withIdentifier: FUIObjectTableViewCell.reuseIdentifier, for: indexPath) as! FUIObjectTableViewCell
+            let detail = details[indexPath.row]
+            return setContentCell(cell: detailCell, detail: detail)
+        } else {
+            let detailCell = tableView.dequeueReusableCell(withIdentifier: FUIObjectTableViewCell.reuseIdentifier, for: indexPath) as! FUIObjectTableViewCell
+            let detail = details[indexPath.row]
+            
+            detailCell.backgroundColor = UIColor.clear
+            detailCell.headlineText = detail.title
+            detailCell.subheadlineText = detail.subTitle
+            detailCell.tintColor = .preferredFioriColor(forStyle: .map1)
+            detailCell.detailImage = detail.image
+            
+            return detailCell
+        }
         
-        let detail = details[indexPath.row]
-        
-        detailCell.backgroundColor = UIColor.clear
-        detailCell.headlineText = detail.title
-        detailCell.subheadlineText = detail.subTitle
-        detailCell.tintColor = .preferredFioriColor(forStyle: .map1)
-        detailCell.detailImage = detail.image
-        
-        return detailCell
     }
     
+    
+}
+extension MainVC: UISearchBarDelegate {
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        print("Did Begin Editing")
+    }
+
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        print("Did End Editing")
+    }
+
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        print("Did change text")
+    }
     
 }
 extension MainVC: CLLocationManagerDelegate {

@@ -25,9 +25,10 @@
 		7A16F06D1FD1B3C700D2FABD /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 7A16F06C1FD1B3C700D2FABD /* README.md */; };
 		7A5744B621DE553600E58C7F /* UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5744B521DE553600E58C7F /* UITests.swift */; };
 		7E2A47E1F89C9D873C4C43A6 /* AssistanceLocationsByDistanceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA962A7404DBFED65A716B5 /* AssistanceLocationsByDistanceType.swift */; };
+		8799E07604044A917A62E68D /* Pods_ResourceFinderLF.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C7AE7198BD5AC1C6CC627E3 /* Pods_ResourceFinderLF.framework */; };
 		883B5E9D3F8084248FF36B98 /* EntityContainerMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB91F8C8F8CDA6E466E5736C /* EntityContainerMetadata.swift */; };
 		8C07A9D329B67C0AC80D5314 /* Districts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74500BD753F589679C99D56A /* Districts.swift */; };
-		915DAA6D23E44C130000EA22 /* (null) in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		915DAA6D23E44C130000EA22 /* BuildFile in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		91937982232F7A38001F9DAC /* SAPCommon.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9193797D232F7A38001F9DAC /* SAPCommon.xcframework */; };
 		91937983232F7A38001F9DAC /* SAPCommon.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9193797D232F7A38001F9DAC /* SAPCommon.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		91937984232F7A38001F9DAC /* SAPFioriFlows.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9193797E232F7A38001F9DAC /* SAPFioriFlows.xcframework */; };
@@ -74,7 +75,7 @@
 			files = (
 				91937987232F7A38001F9DAC /* SAPFiori.xcframework in Embed Frameworks */,
 				91937985232F7A38001F9DAC /* SAPFioriFlows.xcframework in Embed Frameworks */,
-				915DAA6D23E44C130000EA22 /* (null) in Embed Frameworks */,
+				915DAA6D23E44C130000EA22 /* BuildFile in Embed Frameworks */,
 				9193798B232F7A39001F9DAC /* SAPOData.xcframework in Embed Frameworks */,
 				91937989232F7A39001F9DAC /* SAPFoundation.xcframework in Embed Frameworks */,
 				91937983232F7A38001F9DAC /* SAPCommon.xcframework in Embed Frameworks */,
@@ -85,6 +86,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		02FF2664693283782F00D15E /* Pods-ResourceFinderLF.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ResourceFinderLF.debug.xcconfig"; path = "Target Support Files/Pods-ResourceFinderLF/Pods-ResourceFinderLF.debug.xcconfig"; sourceTree = "<group>"; };
 		06C754F56E284516B6B430DD /* AssistanceTypes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AssistanceTypes.swift; path = "Proxy Classes/public/AssistanceTypes.swift"; sourceTree = "<group>"; };
 		06E352473C80DA1E2D003E5F /* EntityContainerStaticResolver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EntityContainerStaticResolver.swift; path = "Proxy Classes/internal/EntityContainerStaticResolver.swift"; sourceTree = "<group>"; };
 		097787CE170F4460ADDF47F7 /* LocationTypes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LocationTypes.swift; path = "Proxy Classes/public/LocationTypes.swift"; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 		7DA962A7404DBFED65A716B5 /* AssistanceLocationsByDistanceType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AssistanceLocationsByDistanceType.swift; path = "Proxy Classes/public/AssistanceLocationsByDistanceType.swift"; sourceTree = "<group>"; };
 		7E04503E566051179A314CD4 /* AssistanceSubTypes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AssistanceSubTypes.swift; path = "Proxy Classes/public/AssistanceSubTypes.swift"; sourceTree = "<group>"; };
 		8C5093413DF84734D95D03D7 /* Sap4kidsParameters.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Sap4kidsParameters.swift; path = "Proxy Classes/public/Sap4kidsParameters.swift"; sourceTree = "<group>"; };
+		8C7AE7198BD5AC1C6CC627E3 /* Pods_ResourceFinderLF.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ResourceFinderLF.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9165975B23C5FF91005C31AF /* ResourceFinderLF.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ResourceFinderLF.entitlements; sourceTree = "<group>"; };
 		9193797D232F7A38001F9DAC /* SAPCommon.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = SAPCommon.xcframework; sourceTree = "<group>"; };
 		9193797E232F7A38001F9DAC /* SAPFioriFlows.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = SAPFioriFlows.xcframework; sourceTree = "<group>"; };
@@ -127,6 +130,7 @@
 		DC716D2198A7979D3DFFE9D0 /* SchoolOffersParameters.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SchoolOffersParameters.swift; path = "Proxy Classes/public/SchoolOffersParameters.swift"; sourceTree = "<group>"; };
 		E3A0DB9485EE12ECF627C6AD /* EligiblityCategories.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EligiblityCategories.swift; path = "Proxy Classes/public/EligiblityCategories.swift"; sourceTree = "<group>"; };
 		E547F1E742F4A7CEE8A0A6BC /* DeliveryModeTexts.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DeliveryModeTexts.swift; path = "Proxy Classes/public/DeliveryModeTexts.swift"; sourceTree = "<group>"; };
+		ED7498294EAD65D452808594 /* Pods-ResourceFinderLF.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ResourceFinderLF.release.xcconfig"; path = "Target Support Files/Pods-ResourceFinderLF/Pods-ResourceFinderLF.release.xcconfig"; sourceTree = "<group>"; };
 		EEEFB5587CFDB9240706B68D /* Schools.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Schools.swift; path = "Proxy Classes/public/Schools.swift"; sourceTree = "<group>"; };
 		F5EB2CB130F640798A9A03F4 /* SchoolOfferingAssistance.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SchoolOfferingAssistance.swift; path = "Proxy Classes/public/SchoolOfferingAssistance.swift"; sourceTree = "<group>"; };
 		FD6A92119F35AAD973D81CC6 /* DeliveryModes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DeliveryModes.swift; path = "Proxy Classes/public/DeliveryModes.swift"; sourceTree = "<group>"; };
@@ -142,6 +146,7 @@
 				9193798A232F7A39001F9DAC /* SAPOData.xcframework in Frameworks */,
 				91937988232F7A38001F9DAC /* SAPFoundation.xcframework in Frameworks */,
 				91937982232F7A38001F9DAC /* SAPCommon.xcframework in Frameworks */,
+				8799E07604044A917A62E68D /* Pods_ResourceFinderLF.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,6 +201,16 @@
 			name = internal;
 			sourceTree = "<group>";
 		};
+		335E423D737D86031E0749F9 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				02FF2664693283782F00D15E /* Pods-ResourceFinderLF.debug.xcconfig */,
+				ED7498294EAD65D452808594 /* Pods-ResourceFinderLF.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		7A1315AC1D4B982000A5DA56 = {
 			isa = PBXGroup;
 			children = (
@@ -205,6 +220,7 @@
 				7A5744B421DE553600E58C7F /* UITests */,
 				7A1315B61D4B982000A5DA56 /* Products */,
 				7A1315CC1D4B990B00A5DA56 /* Frameworks */,
+				335E423D737D86031E0749F9 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -236,6 +252,7 @@
 				9193797E232F7A38001F9DAC /* SAPFioriFlows.xcframework */,
 				91937980232F7A38001F9DAC /* SAPFoundation.xcframework */,
 				91937981232F7A38001F9DAC /* SAPOData.xcframework */,
+				8C7AE7198BD5AC1C6CC627E3 /* Pods_ResourceFinderLF.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -293,12 +310,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7A1315C91D4B982000A5DA56 /* Build configuration list for PBXNativeTarget "ResourceFinderLF" */;
 			buildPhases = (
+				5B32C9A3ADBD6E82356B9B99 /* [CP] Check Pods Manifest.lock */,
 				237616AD21AECC9A00B6F8AD /* Refresh SAP Cloud Platform SDK for iOS Frameworks */,
 				AE0C88F52403A30E002A9565 /* Codesign Binaries */,
 				7A1315B11D4B982000A5DA56 /* Sources */,
 				7A1315B21D4B982000A5DA56 /* Frameworks */,
 				7A1315B31D4B982000A5DA56 /* Resources */,
 				758AC1C31D5A265200311F39 /* Embed Frameworks */,
+				71249B744FFDDC8177D4CA89 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -409,6 +428,45 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "sh ./scripts/refreshframeworks.sh\n";
+			showEnvVarsInLog = 0;
+		};
+		5B32C9A3ADBD6E82356B9B99 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ResourceFinderLF-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		71249B744FFDDC8177D4CA89 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ResourceFinderLF/Pods-ResourceFinderLF-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ResourceFinderLF/Pods-ResourceFinderLF-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ResourceFinderLF/Pods-ResourceFinderLF-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		AE0C88F52403A30E002A9565 /* Codesign Binaries */ = {
@@ -622,6 +680,7 @@
 		};
 		7A1315CA1D4B982000A5DA56 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 02FF2664693283782F00D15E /* Pods-ResourceFinderLF.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
@@ -651,6 +710,7 @@
 		};
 		7A1315CB1D4B982000A5DA56 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = ED7498294EAD65D452808594 /* Pods-ResourceFinderLF.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
