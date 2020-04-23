@@ -28,7 +28,7 @@
 		8799E07604044A917A62E68D /* Pods_ResourceFinderLF.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C7AE7198BD5AC1C6CC627E3 /* Pods_ResourceFinderLF.framework */; };
 		883B5E9D3F8084248FF36B98 /* EntityContainerMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB91F8C8F8CDA6E466E5736C /* EntityContainerMetadata.swift */; };
 		8C07A9D329B67C0AC80D5314 /* Districts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74500BD753F589679C99D56A /* Districts.swift */; };
-		915DAA6D23E44C130000EA22 /* BuildFile in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		915DAA6D23E44C130000EA22 /* (null) in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		91937982232F7A38001F9DAC /* SAPCommon.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9193797D232F7A38001F9DAC /* SAPCommon.xcframework */; };
 		91937983232F7A38001F9DAC /* SAPCommon.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9193797D232F7A38001F9DAC /* SAPCommon.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		91937984232F7A38001F9DAC /* SAPFioriFlows.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9193797E232F7A38001F9DAC /* SAPFioriFlows.xcframework */; };
@@ -49,6 +49,8 @@
 		CBCA7A991E3778A9001AF49E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CBCA7A9B1E3778A9001AF49E /* Main.storyboard */; };
 		D667DA1410428BD0AA07AC57 /* DistrictOfferingAsistance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13401BBB15230186ADF536E6 /* DistrictOfferingAsistance.swift */; };
 		D708A27D244F803100C967A8 /* MainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D708A27C244F803100C967A8 /* MainVC.swift */; };
+		D7A33AAC2452070C00494AC9 /* SchoolOfferManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A33AAB2452070C00494AC9 /* SchoolOfferManager.swift */; };
+		D7A33AAF24520EA000494AC9 /* SchoolOffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A33AAE24520EA000494AC9 /* SchoolOffer.swift */; };
 		EE326CC45C7EA533F61C963E /* Addresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2016C8F4783729B37EBBA1C1 /* Addresses.swift */; };
 		EE4900C8C243F658542F69D0 /* Schools.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEEFB5587CFDB9240706B68D /* Schools.swift */; };
 		F06E51B6CEF22739B6BCBF78 /* EntityContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F53EDA36F4CD9C2E27090E /* EntityContainer.swift */; };
@@ -75,7 +77,7 @@
 			files = (
 				91937987232F7A38001F9DAC /* SAPFiori.xcframework in Embed Frameworks */,
 				91937985232F7A38001F9DAC /* SAPFioriFlows.xcframework in Embed Frameworks */,
-				915DAA6D23E44C130000EA22 /* BuildFile in Embed Frameworks */,
+				915DAA6D23E44C130000EA22 /* (null) in Embed Frameworks */,
 				9193798B232F7A39001F9DAC /* SAPOData.xcframework in Embed Frameworks */,
 				91937989232F7A39001F9DAC /* SAPFoundation.xcframework in Embed Frameworks */,
 				91937983232F7A38001F9DAC /* SAPCommon.xcframework in Embed Frameworks */,
@@ -127,6 +129,8 @@
 		AC963D690DCF903D1CE6008E /* Sap4kidsType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Sap4kidsType.swift; path = "Proxy Classes/public/Sap4kidsType.swift"; sourceTree = "<group>"; };
 		CB909D801E38CA8800218154 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D708A27C244F803100C967A8 /* MainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainVC.swift; sourceTree = "<group>"; };
+		D7A33AAB2452070C00494AC9 /* SchoolOfferManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolOfferManager.swift; sourceTree = "<group>"; };
+		D7A33AAE24520EA000494AC9 /* SchoolOffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolOffer.swift; sourceTree = "<group>"; };
 		DC716D2198A7979D3DFFE9D0 /* SchoolOffersParameters.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SchoolOffersParameters.swift; path = "Proxy Classes/public/SchoolOffersParameters.swift"; sourceTree = "<group>"; };
 		E3A0DB9485EE12ECF627C6AD /* EligiblityCategories.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EligiblityCategories.swift; path = "Proxy Classes/public/EligiblityCategories.swift"; sourceTree = "<group>"; };
 		E547F1E742F4A7CEE8A0A6BC /* DeliveryModeTexts.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DeliveryModeTexts.swift; path = "Proxy Classes/public/DeliveryModeTexts.swift"; sourceTree = "<group>"; };
@@ -207,7 +211,6 @@
 				02FF2664693283782F00D15E /* Pods-ResourceFinderLF.debug.xcconfig */,
 				ED7498294EAD65D452808594 /* Pods-ResourceFinderLF.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -236,7 +239,9 @@
 		7A1315B71D4B982000A5DA56 /* ResourceFinderLF */ = {
 			isa = PBXGroup;
 			children = (
+				D7A33AAD24520E9200494AC9 /* Models */,
 				D708A279244F7F9300C967A8 /* Controllers */,
+				D7A33AAA245206EC00494AC9 /* Helpers */,
 				D708A27A244F7FA800C967A8 /* Views */,
 				D708A27B244F7FC000C967A8 /* SupportFiles */,
 				B529B5FECD10D490F680C5E2 /* Proxy Classes */,
@@ -301,6 +306,22 @@
 				7A1315C61D4B982000A5DA56 /* Info.plist */,
 			);
 			name = SupportFiles;
+			sourceTree = "<group>";
+		};
+		D7A33AAA245206EC00494AC9 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				D7A33AAB2452070C00494AC9 /* SchoolOfferManager.swift */,
+			);
+			name = Helpers;
+			sourceTree = "<group>";
+		};
+		D7A33AAD24520E9200494AC9 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D7A33AAE24520EA000494AC9 /* SchoolOffer.swift */,
+			);
+			name = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -522,7 +543,9 @@
 				C2C6FA92C03EC41AA9BB274E /* Sap4kidsType.swift in Sources */,
 				38EA7F546F8F677B21A2BA65 /* LocationTypes.swift in Sources */,
 				5A5D75B5F03A296EC495A230 /* EntityContainerMetadataParser.swift in Sources */,
+				D7A33AAC2452070C00494AC9 /* SchoolOfferManager.swift in Sources */,
 				883B5E9D3F8084248FF36B98 /* EntityContainerMetadata.swift in Sources */,
+				D7A33AAF24520EA000494AC9 /* SchoolOffer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

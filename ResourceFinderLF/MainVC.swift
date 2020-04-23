@@ -45,6 +45,11 @@ class MainVC: UIViewController {
         //TODO: Timeline cells?
         //TODO: Fullscreen map
         //TODO: Find Relevant results. (Future or current)
+        SchoolOfferManager.getSchoolOffers(lat: 37.703, long: -85.213, dist: 500, callback: didFetchSchoolOffers)
+    }
+    
+    func didFetchSchoolOffers(fetchedSchoolOffers: [SchoolOffer]?) {
+        print(fetchedSchoolOffers?.count)
     }
     
     // Ensures that the detail panel is present whenever the map view appears.
