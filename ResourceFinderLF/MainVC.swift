@@ -32,6 +32,8 @@ class MainVC: UIViewController {
         Detail(title: "Breakfast (M, Tu, W, Th, F)", subTitle: "11:00 AM - 1:00 PM", image: UIImage(systemName: "clock.fill")),
         Detail(title: "Lunch (M, Tu, W, Th, F)", subTitle: "11:00 AM - 1:00 PM", image: UIImage(systemName: "clock.fill"))
     ]
+    var schoolOffers: [SchoolOffer]?
+    var locations = [MKPointAnnotation]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,11 +47,9 @@ class MainVC: UIViewController {
         //TODO: Timeline cells?
         //TODO: Fullscreen map
         //TODO: Find Relevant results. (Future or current)
-        SchoolOfferManager.getSchoolOffers(lat: 37.703, long: -85.213, dist: 500, callback: didFetchSchoolOffers)
-    }
-    
-    func didFetchSchoolOffers(fetchedSchoolOffers: [SchoolOffer]?) {
-        print(fetchedSchoolOffers?.count)
+        //TODO: Indicate loading results
+        //TODO: Show Map Settings?
+        //TODO: Zoom out map when placing pins
     }
     
     // Ensures that the detail panel is present whenever the map view appears.
@@ -79,6 +79,7 @@ class MainVC: UIViewController {
         if let location = getUserLocation() {
             self.userLocation = location
             centerMap(location: location, zoom: 0.005)
+            fetchSchoolOffers(location: location)
         } else {
             //Center Map on U.S.
             let USCenter = CLLocationCoordinate2D(latitude: 39.829219, longitude: -98.579394)
@@ -87,8 +88,8 @@ class MainVC: UIViewController {
             locationManager?.requestWhenInUseAuthorization()
         }
         
-        let schoolLocation = CLLocationCoordinate2D(latitude: 43.204192, longitude: -77.593500)
-        placePin(title: "BROOKVIEW SCHOOL", location: schoolLocation)
+//        let schoolLocation = CLLocationCoordinate2D(latitude: 43.204192, longitude: -77.593500)
+//        placePin(title: "BROOKVIEW SCHOOL", location: schoolLocation)
     }
     
     //Return User Location if enabled
@@ -103,11 +104,12 @@ class MainVC: UIViewController {
     }
     
     //Place annotation pin at location
-    private func placePin(title: String, location: CLLocationCoordinate2D) {
+    private func placePin(title: String, location: CLLocationCoordinate2D) -> MKPointAnnotation {
         let annotation = MKPointAnnotation()
         annotation.coordinate = location
         annotation.title = title
-        self.mapView.addAnnotation(annotation)
+        //self.mapView.addAnnotation(annotation)
+        return annotation
     }
     
     private class FioriMarker: FUIMarkerAnnotationView {
@@ -165,6 +167,25 @@ class MainVC: UIViewController {
 //    }
     
     //MARK: Backend Calls
+    private func fetchSchoolOffers(location: CLLocationCoordinate2D) {
+        let lat = location.latitude
+        let long = location.longitude
+        SchoolOfferManager.getSchoolOffers(lat: lat, long: long, dist: 150, callback: didFetchSchoolOffers)
+    }
+    
+    func didFetchSchoolOffers(fetchedSchoolOffers: [SchoolOffer]?) {
+        if let offers = fetchedSchoolOffers {
+            self.schoolOffers = offers
+            for offer in offers {
+                let annotation = MKPointAnnotation()
+                annotation.coordinate = CLLocationCoordinate2D(latitude: offer.lat, longitude: offer.long)
+                annotation.title = title
+                locations.append(annotation)
+            }
+        }
+        self.mapView.showAnnotations(locations, animated: true)
+    }
+    
     private func fetchSchoolOfferings() {
         //https://sap4good-dev-sap4kids-srv.cfapps.us10.hana.ondemand.com/map/SchoolOffers(LATITUDE=37.703,LONGITUDE=-85.213,DISTANCEFORSEARCH=500,ELIGIBILITYCAT=%27%27%2736a00731-7f07-42a8-a141-f4303d41a10b%27%27%27,ASSISTSUBTYPE=%27%27%2703487ac3-e0db-43af-852b-2ebf198e3a0f%27%27%27)/Set
         //SchoolOfferingAssistance
