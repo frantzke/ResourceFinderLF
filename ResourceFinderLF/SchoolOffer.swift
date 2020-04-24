@@ -9,6 +9,7 @@
 import Foundation
 
 class SchoolOffer {
+    //MARK: Backend Properties
     var id: String
     var from: String?
     var to: String?
@@ -45,6 +46,37 @@ class SchoolOffer {
     var contactName: String?
     var contactEmail: String?
     var contactTitle: String?
+    
+    //MARK: Calculated Properties
+    var address: String {
+        return "\(street ?? ""), \(city ?? "") \(stateCode ?? "")"
+    }
+    var how: String {
+        var howStr = ""
+        howStr += pickup ?? false ? "Pickup " : ""
+        howStr += delivery ?? false ? "Delivery": ""
+        return howStr
+    }
+    var who: String {
+        return self.elegibilityCategory ?? ""
+    }
+    var when: String {
+        var whenStr = "\(assistanceSubtype ?? "") ("
+        whenStr += mon ?? false ? "Mon, " : ""
+        whenStr += tue ?? false ? "Tue, " : ""
+        whenStr += wed ?? false ? "Wed, " : ""
+        whenStr += thu ?? false ? "Thu, " : ""
+        whenStr += fri ?? false ? "Fri, " : ""
+        whenStr += sat ?? false ? "Sat, " : ""
+        whenStr += sun ?? false ? "Sun, " : ""
+        whenStr.removeLast(2)
+        whenStr += ")"
+        
+        return whenStr
+    }
+    var time: String {
+        return "\(from ?? "") - \(to ?? "")"
+    }
     
     
     init(id: String, lat: Double, long: Double) {

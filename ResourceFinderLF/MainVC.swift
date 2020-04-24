@@ -26,14 +26,15 @@ class MainVC: UIViewController {
     var userLocation: CLLocationCoordinate2D?
     var detailPanel: FUIMapDetailPanel!
     
+//    var isPresentingDetail: Bool = false
     var details: [Detail] = [
         Detail(title: "How", subTitle: "Pickup", image: UIImage(systemName: "questionmark.circle.fill")),
         Detail(title: "Who", subTitle: "Students and Siblings under age 18", image: UIImage(systemName: "person.circle.fill")),
         Detail(title: "Breakfast (M, Tu, W, Th, F)", subTitle: "11:00 AM - 1:00 PM", image: UIImage(systemName: "clock.fill")),
         Detail(title: "Lunch (M, Tu, W, Th, F)", subTitle: "11:00 AM - 1:00 PM", image: UIImage(systemName: "clock.fill"))
     ]
-    var schoolOffers: [SchoolOffer]?
-    var locations = [MKPointAnnotation]()
+    //var schoolOffers: [SchoolOffer]?
+    var offerPins = [OfferPin]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -104,13 +105,13 @@ class MainVC: UIViewController {
     }
     
     //Place annotation pin at location
-    private func placePin(title: String, location: CLLocationCoordinate2D) -> MKPointAnnotation {
-        let annotation = MKPointAnnotation()
-        annotation.coordinate = location
-        annotation.title = title
-        //self.mapView.addAnnotation(annotation)
-        return annotation
-    }
+//    private func placePin(title: String, location: CLLocationCoordinate2D) -> MKPointAnnotation {
+//        let annotation = MKPointAnnotation()
+//        annotation.coordinate = location
+//        annotation.title = title
+//        //self.mapView.addAnnotation(annotation)
+//        return annotation
+//    }
     
     private class FioriMarker: FUIMarkerAnnotationView {
 
@@ -134,8 +135,8 @@ class MainVC: UIViewController {
         detailPanel.content.tableView.register(FUIObjectTableViewCell.self, forCellReuseIdentifier:  FUIObjectTableViewCell.reuseIdentifier)
         detailPanel.searchResults.tableView.estimatedRowHeight = 60
         detailPanel.searchResults.tableView.rowHeight = UITableView.automaticDimension
-        detailPanel.content.headlineText = "BROOKVIEW SCHOOL"
-        detailPanel.content.subheadlineText = "300 BROOKVIEW DR, ROCHESTER, NY"
+        //detailPanel.content.headlineText = "BROOKVIEW SCHOOL"
+        //detailPanel.content.subheadlineText = "300 BROOKVIEW DR, ROCHESTER, NY"
         
         // Setup Search
         self.detailPanel.isSearchEnabled = true
@@ -166,48 +167,38 @@ class MainVC: UIViewController {
 //
 //    }
     
+    private func setDetailPanel(offer: SchoolOffer) {
+        detailPanel.content.headlineText = offer.name
+        detailPanel.content.subheadlineText = offer.address
+        
+        //TODO: Multiple Times
+        let details = [
+            Detail(title: "How", subTitle: offer.how, image: UIImage(systemName: "questionmark.circle.fill")),
+            Detail(title: "Who", subTitle: offer.who, image: UIImage(systemName: "person.circle.fill")),
+            Detail(title: offer.when, subTitle: offer.time, image: UIImage(systemName: "clock.fill")),
+        ]
+        //Detail(title: "Lunch (M, Tu, W, Th, F)", subTitle: "11:00 AM - 1:00 PM", image: UIImage(systemName: "clock.fill"))
+        self.details = details
+        detailPanel.content.tableView.reloadData()
+    }
+    
     //MARK: Backend Calls
     private func fetchSchoolOffers(location: CLLocationCoordinate2D) {
-        let lat = location.latitude
-        let long = location.longitude
-        SchoolOfferManager.getSchoolOffers(lat: lat, long: long, dist: 150, callback: didFetchSchoolOffers)
+        SchoolOfferManager.getSchoolOffers(lat: location.latitude, long: location.longitude, dist: 200, callback: didFetchSchoolOffers)
     }
     
     func didFetchSchoolOffers(fetchedSchoolOffers: [SchoolOffer]?) {
         if let offers = fetchedSchoolOffers {
-            self.schoolOffers = offers
+            //self.schoolOffers = offers
+            //TODO: Annotations with the same coordinates
             for offer in offers {
-                let annotation = MKPointAnnotation()
-                annotation.coordinate = CLLocationCoordinate2D(latitude: offer.lat, longitude: offer.long)
-                annotation.title = title
-                locations.append(annotation)
+                let offerPin = OfferPin(title: offer.name, schoolOffer: offer, coordinate: CLLocationCoordinate2D(latitude: offer.lat, longitude: offer.long))
+                offerPins.append(offerPin)
             }
         }
-        self.mapView.showAnnotations(locations, animated: true)
+        self.mapView.showAnnotations(offerPins, animated: true)
     }
     
-    private func fetchSchoolOfferings() {
-        //https://sap4good-dev-sap4kids-srv.cfapps.us10.hana.ondemand.com/map/SchoolOffers(LATITUDE=37.703,LONGITUDE=-85.213,DISTANCEFORSEARCH=500,ELIGIBILITYCAT=%27%27%2736a00731-7f07-42a8-a141-f4303d41a10b%27%27%27,ASSISTSUBTYPE=%27%27%2703487ac3-e0db-43af-852b-2ebf198e3a0f%27%27%27)/Set
-        //SchoolOfferingAssistance
-        
-//        let serviceEndpoint = URL(string: "https://sap4good-dev-sap4kids-srv.cfapps.us10.hana.ondemand.com/map")!
-//        let provider = OnlineODataProvider(serviceRoot: serviceEndpoint)
-
-        //initialize OData service from the generated proxy class with the provider.
-        
-        //let query = DataQuery()
-    }
-    
-
-}
-extension MainVC: MKMapViewDelegate {
-    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        detailPanel.pushChildViewController()
-    }
-
-    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
-        detailPanel.popChildViewController()
-    }
 }
 extension MainVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -237,8 +228,19 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
         }
         
     }
-    
-    
+
+}
+extension MainVC: MKMapViewDelegate {
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        if let annotation = view.annotation as? OfferPin {
+            setDetailPanel(offer: annotation.schoolOffer)
+        }
+        detailPanel.pushChildViewController()
+    }
+
+    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
+        detailPanel.popChildViewController()
+    }
 }
 extension MainVC: UISearchBarDelegate {
     
