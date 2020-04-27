@@ -34,7 +34,7 @@ class MainVC: UIViewController {
         Detail(title: "Lunch (M, Tu, W, Th, F)", subTitle: "11:00 AM - 1:00 PM", image: UIImage(systemName: "clock.fill"))
     ]
     //var schoolOffers: [SchoolOffer]?
-    var offerPins = [OfferPin]()
+    var schoolPins = [SchoolPin]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -167,36 +167,39 @@ class MainVC: UIViewController {
 //
 //    }
     
-    private func setDetailPanel(offer: SchoolOffer) {
-        detailPanel.content.headlineText = offer.name
-        detailPanel.content.subheadlineText = offer.address
+    private func setDetailPanel(school: School, offers: [Offer]) {
+        detailPanel.content.headlineText = school.name
+        detailPanel.content.subheadlineText = school.address
         
-        //TODO: Multiple Times
-        let details = [
-            Detail(title: "How", subTitle: offer.how, image: UIImage(systemName: "questionmark.circle.fill")),
-            Detail(title: "Who", subTitle: offer.who, image: UIImage(systemName: "person.circle.fill")),
-            Detail(title: offer.when, subTitle: offer.time, image: UIImage(systemName: "clock.fill")),
+        var details = [
+            Detail(title: "How", subTitle: school.how, image: UIImage(systemName: "questionmark.circle.fill")),
+            Detail(title: "Who", subTitle: school.who, image: UIImage(systemName: "person.circle.fill")),
         ]
-        //Detail(title: "Lunch (M, Tu, W, Th, F)", subTitle: "11:00 AM - 1:00 PM", image: UIImage(systemName: "clock.fill"))
+        for offer in offers {
+            details.append(Detail(title: offer.when, subTitle: offer.time, image: UIImage(systemName: "clock.fill")))
+        }
         self.details = details
+        
         detailPanel.content.tableView.reloadData()
     }
     
     //MARK: Backend Calls
     private func fetchSchoolOffers(location: CLLocationCoordinate2D) {
-        SchoolOfferManager.getSchoolOffers(lat: location.latitude, long: location.longitude, dist: 200, callback: didFetchSchoolOffers)
+        SchoolOfferManager.getSchoolPins(lat: location.latitude, long: location.longitude, dist: 200, callback: didFetchSchoolPins)
     }
     
-    func didFetchSchoolOffers(fetchedSchoolOffers: [SchoolOffer]?) {
-        if let offers = fetchedSchoolOffers {
+    func didFetchSchoolPins(fetchedSchoolPins: [SchoolPin]?) {
+        if let pins = fetchedSchoolPins {
             //self.schoolOffers = offers
             //TODO: Annotations with the same coordinates
-            for offer in offers {
-                let offerPin = OfferPin(title: offer.name, schoolOffer: offer, coordinate: CLLocationCoordinate2D(latitude: offer.lat, longitude: offer.long))
-                offerPins.append(offerPin)
-            }
+            //for pin in pins {
+                //let offerPin = OfferPin(title: offer.name, schoolOffer: offer, coordinate: CLLocationCoordinate2D(latitude: offer.lat, longitude: offer.long))
+                //offerPins.append(offerPin)
+            //}
+            self.schoolPins = pins
+            self.mapView.showAnnotations(pins, animated: true)
         }
-        self.mapView.showAnnotations(offerPins, animated: true)
+        
     }
     
 }
@@ -232,8 +235,8 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
 }
 extension MainVC: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        if let annotation = view.annotation as? OfferPin {
-            setDetailPanel(offer: annotation.schoolOffer)
+        if let pin = view.annotation as? SchoolPin {
+            setDetailPanel(school: pin.school, offers: pin.offers)
         }
         detailPanel.pushChildViewController()
     }

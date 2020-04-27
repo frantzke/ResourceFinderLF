@@ -49,6 +49,9 @@
 		CBCA7A991E3778A9001AF49E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CBCA7A9B1E3778A9001AF49E /* Main.storyboard */; };
 		D667DA1410428BD0AA07AC57 /* DistrictOfferingAsistance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13401BBB15230186ADF536E6 /* DistrictOfferingAsistance.swift */; };
 		D708A27D244F803100C967A8 /* MainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D708A27C244F803100C967A8 /* MainVC.swift */; };
+		D7185FB824571B1900C88974 /* School.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7185FB724571B1900C88974 /* School.swift */; };
+		D7185FBA24571D2700C88974 /* Offer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7185FB924571D2600C88974 /* Offer.swift */; };
+		D7185FBC245722C400C88974 /* SchoolPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7185FBB245722C400C88974 /* SchoolPin.swift */; };
 		D7A1099724532F73006E381F /* OfferPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A1099624532F73006E381F /* OfferPin.swift */; };
 		D7A33AAC2452070C00494AC9 /* SchoolOfferManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A33AAB2452070C00494AC9 /* SchoolOfferManager.swift */; };
 		D7A33AAF24520EA000494AC9 /* SchoolOffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A33AAE24520EA000494AC9 /* SchoolOffer.swift */; };
@@ -139,6 +142,9 @@
 		AC963D690DCF903D1CE6008E /* Sap4kidsType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Sap4kidsType.swift; path = "Proxy Classes/public/Sap4kidsType.swift"; sourceTree = "<group>"; };
 		CB909D801E38CA8800218154 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D708A27C244F803100C967A8 /* MainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainVC.swift; sourceTree = "<group>"; };
+		D7185FB724571B1900C88974 /* School.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = School.swift; sourceTree = "<group>"; };
+		D7185FB924571D2600C88974 /* Offer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Offer.swift; sourceTree = "<group>"; };
+		D7185FBB245722C400C88974 /* SchoolPin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolPin.swift; sourceTree = "<group>"; };
 		D7A1099624532F73006E381F /* OfferPin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferPin.swift; sourceTree = "<group>"; };
 		D7A33AAB2452070C00494AC9 /* SchoolOfferManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolOfferManager.swift; sourceTree = "<group>"; };
 		D7A33AAE24520EA000494AC9 /* SchoolOffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolOffer.swift; sourceTree = "<group>"; };
@@ -345,6 +351,9 @@
 			children = (
 				D7A33AAE24520EA000494AC9 /* SchoolOffer.swift */,
 				D7A1099624532F73006E381F /* OfferPin.swift */,
+				D7185FB724571B1900C88974 /* School.swift */,
+				D7185FB924571D2600C88974 /* Offer.swift */,
+				D7185FBB245722C400C88974 /* SchoolPin.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -599,6 +608,8 @@
 				0895CC6AC9C9D69D6ED12FEC /* DeliveryModeTexts.swift in Sources */,
 				4C94BE5411977F095606B194 /* DeliveryModes.swift in Sources */,
 				9847B36E852BB5A91E68EFAB /* SchoolOffersParameters.swift in Sources */,
+				D7185FB824571B1900C88974 /* School.swift in Sources */,
+				D7185FBA24571D2700C88974 /* Offer.swift in Sources */,
 				78D9BC92D77F9F491D0A8356 /* EntityContainerStaticResolver.swift in Sources */,
 				EE4900C8C243F658542F69D0 /* Schools.swift in Sources */,
 				F0FA65C50E74276EAD69208A /* SchoolOffersType.swift in Sources */,
@@ -609,6 +620,7 @@
 				C2C6FA92C03EC41AA9BB274E /* Sap4kidsType.swift in Sources */,
 				38EA7F546F8F677B21A2BA65 /* LocationTypes.swift in Sources */,
 				5A5D75B5F03A296EC495A230 /* EntityContainerMetadataParser.swift in Sources */,
+				D7185FBC245722C400C88974 /* SchoolPin.swift in Sources */,
 				D7A33AAC2452070C00494AC9 /* SchoolOfferManager.swift in Sources */,
 				883B5E9D3F8084248FF36B98 /* EntityContainerMetadata.swift in Sources */,
 				D7A33AAF24520EA000494AC9 /* SchoolOffer.swift in Sources */,
