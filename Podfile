@@ -5,5 +5,6 @@ target 'ResourceFinderLF' do
   pod 'IQKeyboardManagerSwift'
   pod 'Alamofire'
   pod 'SwiftyJSON', '~> 4.0'
+  pod 'SVProgressHUD', '~> 2.2'
 
 end

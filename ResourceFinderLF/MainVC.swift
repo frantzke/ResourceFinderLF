@@ -10,6 +10,7 @@ import UIKit
 import MapKit
 import SAPFiori
 import SAPOData
+import SVProgressHUD
 
 struct Detail {
     var title: String
@@ -40,17 +41,6 @@ class MainVC: UIViewController {
         super.viewDidLoad()
         
         setupView()
-        
-        //TODO: Add Search Bar
-        //TODO: Add Directions to Detail with FioriButton
-        //TODO: Get real data from backend
-        //TODO: Add modal for first time use + get location
-        //TODO: Timeline cells?
-        //TODO: Fullscreen map
-        //TODO: Find Relevant results. (Future or current)
-        //TODO: Indicate loading results
-        //TODO: Show Map Settings?
-        //TODO: Zoom out map when placing pins
     }
     
     // Ensures that the detail panel is present whenever the map view appears.
@@ -133,8 +123,11 @@ class MainVC: UIViewController {
         detailPanel.content.tableView.dataSource = self
         detailPanel.content.tableView.delegate = self
         detailPanel.content.tableView.register(FUIObjectTableViewCell.self, forCellReuseIdentifier:  FUIObjectTableViewCell.reuseIdentifier)
-        detailPanel.searchResults.tableView.estimatedRowHeight = 60
-        detailPanel.searchResults.tableView.rowHeight = UITableView.automaticDimension
+        detailPanel.content.tableView.estimatedRowHeight = 60
+        detailPanel.content.tableView.rowHeight = UITableView.automaticDimension
+//        detailPanel.content.didSelectTitleHandler = {
+//            print("DID SELECT TITLE HANDLER")
+//        }
         //detailPanel.content.headlineText = "BROOKVIEW SCHOOL"
         //detailPanel.content.subheadlineText = "300 BROOKVIEW DR, ROCHESTER, NY"
         
@@ -185,6 +178,7 @@ class MainVC: UIViewController {
     
     //MARK: Backend Calls
     private func fetchSchoolOffers(location: CLLocationCoordinate2D) {
+        SVProgressHUD.show()
         SchoolOfferManager.getSchoolPins(lat: location.latitude, long: location.longitude, dist: 200, callback: didFetchSchoolPins)
     }
     
@@ -198,6 +192,7 @@ class MainVC: UIViewController {
             //}
             self.schoolPins = pins
             self.mapView.showAnnotations(pins, animated: true)
+            SVProgressHUD.dismiss()
         }
         
     }
@@ -238,11 +233,15 @@ extension MainVC: MKMapViewDelegate {
         if let pin = view.annotation as? SchoolPin {
             setDetailPanel(school: pin.school, offers: pin.offers)
         }
-        detailPanel.pushChildViewController()
+        DispatchQueue.main.async {
+            self.detailPanel.pushChildViewController()
+        }
     }
 
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
-        detailPanel.popChildViewController()
+        DispatchQueue.main.async {
+            self.detailPanel.popChildViewController()
+        }
     }
 }
 extension MainVC: UISearchBarDelegate {

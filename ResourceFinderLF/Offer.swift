@@ -32,13 +32,13 @@ class Offer {
     //Calculated Properties
     var when: String {
         var whenStr = "\(assistanceSubtype) ("
-        whenStr += mon ?? false ? "Mon, " : ""
-        whenStr += tue ?? false ? "Tue, " : ""
-        whenStr += wed ?? false ? "Wed, " : ""
-        whenStr += thu ?? false ? "Thu, " : ""
-        whenStr += fri ?? false ? "Fri, " : ""
-        whenStr += sat ?? false ? "Sat, " : ""
-        whenStr += sun ?? false ? "Sun, " : ""
+        whenStr += mon ?? false ? "Mo, " : ""
+        whenStr += tue ?? false ? "Tu, " : ""
+        whenStr += wed ?? false ? "We, " : ""
+        whenStr += thu ?? false ? "Th, " : ""
+        whenStr += fri ?? false ? "Fr, " : ""
+        whenStr += sat ?? false ? "Sa, " : ""
+        whenStr += sun ?? false ? "Su, " : ""
         whenStr.removeLast(2)
         whenStr += ")"
         
