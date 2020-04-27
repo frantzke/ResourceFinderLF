@@ -27,15 +27,9 @@ class MainVC: UIViewController {
     var userLocation: CLLocationCoordinate2D?
     var detailPanel: FUIMapDetailPanel!
     
-//    var isPresentingDetail: Bool = false
-    var details: [Detail] = [
-        Detail(title: "How", subTitle: "Pickup", image: UIImage(systemName: "questionmark.circle.fill")),
-        Detail(title: "Who", subTitle: "Students and Siblings under age 18", image: UIImage(systemName: "person.circle.fill")),
-        Detail(title: "Breakfast (M, Tu, W, Th, F)", subTitle: "11:00 AM - 1:00 PM", image: UIImage(systemName: "clock.fill")),
-        Detail(title: "Lunch (M, Tu, W, Th, F)", subTitle: "11:00 AM - 1:00 PM", image: UIImage(systemName: "clock.fill"))
-    ]
-    //var schoolOffers: [SchoolOffer]?
+    var details = [Detail]()
     var schoolPins = [SchoolPin]()
+    var searchResults = [MKMapItem]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -78,9 +72,6 @@ class MainVC: UIViewController {
             //Request Location
             locationManager?.requestWhenInUseAuthorization()
         }
-        
-//        let schoolLocation = CLLocationCoordinate2D(latitude: 43.204192, longitude: -77.593500)
-//        placePin(title: "BROOKVIEW SCHOOL", location: schoolLocation)
     }
     
     //Return User Location if enabled
@@ -93,15 +84,6 @@ class MainVC: UIViewController {
         }
         return nil
     }
-    
-    //Place annotation pin at location
-//    private func placePin(title: String, location: CLLocationCoordinate2D) -> MKPointAnnotation {
-//        let annotation = MKPointAnnotation()
-//        annotation.coordinate = location
-//        annotation.title = title
-//        //self.mapView.addAnnotation(annotation)
-//        return annotation
-//    }
     
     private class FioriMarker: FUIMarkerAnnotationView {
 
@@ -125,11 +107,6 @@ class MainVC: UIViewController {
         detailPanel.content.tableView.register(FUIObjectTableViewCell.self, forCellReuseIdentifier:  FUIObjectTableViewCell.reuseIdentifier)
         detailPanel.content.tableView.estimatedRowHeight = 60
         detailPanel.content.tableView.rowHeight = UITableView.automaticDimension
-//        detailPanel.content.didSelectTitleHandler = {
-//            print("DID SELECT TITLE HANDLER")
-//        }
-        //detailPanel.content.headlineText = "BROOKVIEW SCHOOL"
-        //detailPanel.content.subheadlineText = "300 BROOKVIEW DR, ROCHESTER, NY"
         
         // Setup Search
         self.detailPanel.isSearchEnabled = true
@@ -156,9 +133,12 @@ class MainVC: UIViewController {
         return cell
     }
     
-//    private func setSearchCell(cell: FUIObjectTableViewCell, searchResult: ) {
-//
-//    }
+    private func setSearchCell(cell: FUIObjectTableViewCell, searchResult: MKMapItem) -> FUIObjectTableViewCell {
+        let placemark = searchResult.placemark
+        cell.headlineText = searchResult.name
+        cell.subheadlineText = placemark.title
+        return cell
+    }
     
     private func setDetailPanel(school: School, offers: [Offer]) {
         detailPanel.content.headlineText = school.name
@@ -174,6 +154,24 @@ class MainVC: UIViewController {
         self.details = details
         
         detailPanel.content.tableView.reloadData()
+    }
+    
+    private func searchForAddreses(_ searchText: String) {
+        let searchRequest = MKLocalSearch.Request()
+        searchRequest.naturalLanguageQuery = searchText
+        searchRequest.region = mapView.region
+        
+        let search = MKLocalSearch(request: searchRequest)
+        search.start { response, error in
+            guard let response = response else {
+                print("Error: \(error?.localizedDescription ?? "Unknown error").")
+                return
+            }
+            
+            print("Found \(response.mapItems.count) results")
+            self.searchResults = response.mapItems
+            self.detailPanel.searchResults.tableView.reloadData()
+        }
     }
     
     //MARK: Backend Calls
@@ -201,7 +199,7 @@ class MainVC: UIViewController {
 extension MainVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableView == self.detailPanel.searchResults.tableView {
-            return 0
+            return searchResults.count
         } else {
             return details.count
         }
@@ -213,18 +211,24 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
             let detail = details[indexPath.row]
             return setContentCell(cell: detailCell, detail: detail)
         } else {
-            let detailCell = tableView.dequeueReusableCell(withIdentifier: FUIObjectTableViewCell.reuseIdentifier, for: indexPath) as! FUIObjectTableViewCell
-            let detail = details[indexPath.row]
-            
-            detailCell.backgroundColor = UIColor.clear
-            detailCell.headlineText = detail.title
-            detailCell.subheadlineText = detail.subTitle
-            detailCell.tintColor = .preferredFioriColor(forStyle: .map1)
-            detailCell.detailImage = detail.image
-            
-            return detailCell
+            let searchCell = tableView.dequeueReusableCell(withIdentifier: FUIObjectTableViewCell.reuseIdentifier, for: indexPath) as! FUIObjectTableViewCell
+            let searchResult = searchResults[indexPath.row]
+            return setSearchCell(cell: searchCell, searchResult: searchResult)
         }
         
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("Did select row at: \(indexPath.row)")
+        //Place search pin
+        let searchPin = searchResults[indexPath.row]
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = searchPin.placemark.coordinate
+        annotation.title = "SEARCH CENTER"
+        self.mapView.showAnnotations([annotation], animated: true)
+        DispatchQueue.main.async {
+            self.detailPanel.popChildViewController()
+        }
     }
 
 }
@@ -246,17 +250,31 @@ extension MainVC: MKMapViewDelegate {
 }
 extension MainVC: UISearchBarDelegate {
     
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        print("Did Begin Editing")
-    }
+//    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+//        print("Did Begin Editing")
+//    }
 
-    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        print("Did End Editing")
-    }
+//    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+//        print("Did End Editing")
+//        if let searchText = searchBar.searchTextField.text, searchText != "" {
+//            searchForAddreses(searchText)
+//        }
+//    }
 
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        print("Did change text")
+//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+//        print("Did change text")
+//    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        print("Search button clicked")
+        if let searchText = searchBar.searchTextField.text, searchText != "" {
+            searchForAddreses(searchText)
+        }
     }
+    
+//    func searchBarResultsListButtonClicked(_ searchBar: UISearchBar) {
+//        print("list button clicked")
+//    }
     
 }
 extension MainVC: CLLocationManagerDelegate {
