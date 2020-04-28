@@ -142,6 +142,7 @@ class MainVC: UIViewController {
         cell.subheadlineText = detail.subTitle
         cell.tintColor = .preferredFioriColor(forStyle: .map1)
         cell.detailImage = detail.image
+        cell.isUserInteractionEnabled = false
         return cell
     }
     
@@ -149,6 +150,7 @@ class MainVC: UIViewController {
         let placemark = searchResult.placemark
         cell.headlineText = searchResult.name
         cell.subheadlineText = placemark.title
+        cell.isUserInteractionEnabled = true
         return cell
     }
     
@@ -165,6 +167,21 @@ class MainVC: UIViewController {
         }
         self.details = details
         
+        detailPanel.content.tableView.reloadData()
+    }
+    
+    private func setAddressPanel(_ annotation: MKAnnotation) {
+        detailPanel.content.headlineText = "You are here!"
+        if let title = annotation.title, let subtitle = annotation.subtitle {
+            detailPanel.content.subheadlineText = title
+            self.details = [
+                Detail(title: subtitle ?? "Here",
+                       subTitle: "Searching for resources near here",
+                       image: UIImage(systemName: "questionmark.circle.fill"))
+            ]
+        } else {
+            self.details = [Detail]()
+        }
         detailPanel.content.tableView.reloadData()
     }
     
@@ -231,6 +248,7 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
         let annotation = MKPointAnnotation()
         annotation.coordinate = searchItem.placemark.coordinate
         annotation.title = searchItem.name
+        annotation.subtitle = searchItem.placemark.title
         if let prevPin = searchPin {
             mapView.removeAnnotations([prevPin])
         }
@@ -251,8 +269,10 @@ extension MainVC: MKMapViewDelegate, FUIMKMapViewDelegate {
         if let pin = view.annotation as? SchoolPin {
             self.centerMap(location: pin.coordinate, zoom: 0.01)
             setDetailPanel(school: pin.school, offers: pin.offers)
+        } else if let annotation = view.annotation {
+            self.centerMap(location: annotation.coordinate, zoom: 0.01)
+            self.setAddressPanel(annotation)
         }
-        //TODO: Do something for NOT SchoolPin
         DispatchQueue.main.async {
             self.detailPanel.pushChildViewController()
         }
@@ -267,6 +287,11 @@ extension MainVC: UISearchBarDelegate {
             searchForAddreses(searchText)
         }
     }
+    
+//    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+//        searchBar.text = ""
+//        searchBar.endEditing(true)
+//    }
     
 }
 extension MainVC: CLLocationManagerDelegate {
