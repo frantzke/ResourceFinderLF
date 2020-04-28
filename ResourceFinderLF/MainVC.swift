@@ -30,6 +30,7 @@ class MainVC: UIViewController {
     var details = [Detail]()
     var schoolPins = [SchoolPin]()
     var searchResults = [MKMapItem]()
+    var searchPin: MKPointAnnotation?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,10 +91,14 @@ class MainVC: UIViewController {
         // Override the annotation property to customize it whenever it is set.
         override var annotation: MKAnnotation? {
             willSet {
-                markerTintColor = .preferredFioriColor(forStyle: .map1)
-                glyphImage = FUIIconLibrary.map.marker.cafe.withRenderingMode(.alwaysTemplate)
-                //glyphImage = FUIIconLibrary.map.marker.venue.withRenderingMode(.alwaysTemplate)
-                displayPriority = .defaultHigh
+                if let schoolPin = newValue as? SchoolPin {
+                    markerTintColor = .preferredFioriColor(forStyle: .map1)
+                    glyphImage = FUIIconLibrary.map.marker.cafe.withRenderingMode(.alwaysTemplate)
+                } else {
+                    markerTintColor = .preferredFioriColor(forStyle: .positive)
+                    glyphImage = FUIIconLibrary.system.me.withRenderingMode(.alwaysTemplate)
+                }
+                displayPriority = .required
             }
         }
     }
@@ -176,8 +181,8 @@ class MainVC: UIViewController {
     
     //MARK: Backend Calls
     private func fetchSchoolOffers(location: CLLocationCoordinate2D) {
-        SVProgressHUD.show()
-        SchoolOfferManager.getSchoolPins(lat: location.latitude, long: location.longitude, dist: 200, callback: didFetchSchoolPins)
+        SVProgressHUD.show(withStatus: "Searching for resources")
+        SchoolOfferManager.getSchoolPins(lat: location.latitude, long: location.longitude, dist: 150, callback: didFetchSchoolPins)
     }
     
     func didFetchSchoolPins(fetchedSchoolPins: [SchoolPin]?) {
@@ -190,7 +195,7 @@ class MainVC: UIViewController {
             //}
             self.schoolPins = pins
             self.mapView.showAnnotations(pins, animated: true)
-            SVProgressHUD.dismiss()
+            SVProgressHUD.showSuccess(withStatus: "Found \(pins.count) resources!")
         }
         
     }
@@ -221,11 +226,19 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Did select row at: \(indexPath.row)")
         //Place search pin
-        let searchPin = searchResults[indexPath.row]
+        let searchItem = searchResults[indexPath.row]
         let annotation = MKPointAnnotation()
-        annotation.coordinate = searchPin.placemark.coordinate
-        annotation.title = "SEARCH CENTER"
-        self.mapView.showAnnotations([annotation], animated: true)
+        annotation.coordinate = searchItem.placemark.coordinate
+        annotation.title = searchItem.name
+        if let prevPin = searchPin {
+            mapView.removeAnnotations([prevPin])
+        }
+        mapView.removeAnnotations(schoolPins)
+        searchPin = annotation
+        schoolPins = [SchoolPin]()
+        mapView.showAnnotations([annotation], animated: true)
+        fetchSchoolOffers(location: searchItem.placemark.coordinate)
+        self.detailPanel.searchResults.searchBar.endEditing(true)
         DispatchQueue.main.async {
             self.detailPanel.popChildViewController()
         }
@@ -243,9 +256,9 @@ extension MainVC: MKMapViewDelegate {
     }
 
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
-        DispatchQueue.main.async {
-            self.detailPanel.popChildViewController()
-        }
+//        DispatchQueue.main.async {
+//            self.detailPanel.popChildViewController()
+//        }
     }
 }
 extension MainVC: UISearchBarDelegate {
