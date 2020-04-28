@@ -64,7 +64,7 @@ class MainVC: UIViewController {
         //Check if we are allowed to have the user's location
         if let location = getUserLocation() {
             self.userLocation = location
-            centerMap(location: location, zoom: 0.005)
+            centerMap(location: location, zoom: 0.01)
             fetchSchoolOffers(location: location)
         } else {
             //Center Map on U.S.
@@ -112,6 +112,13 @@ class MainVC: UIViewController {
         detailPanel.content.tableView.register(FUIObjectTableViewCell.self, forCellReuseIdentifier:  FUIObjectTableViewCell.reuseIdentifier)
         detailPanel.content.tableView.estimatedRowHeight = 60
         detailPanel.content.tableView.rowHeight = UITableView.automaticDimension
+        
+        detailPanel.content.closeButton.didSelectHandler = { [unowned self] _ in
+            for annotation in self.mapView.selectedAnnotations {
+                self.mapView.deselectAnnotation(annotation, animated: true)
+            }
+            self.detailPanel.popChildViewController()
+        }
         
         // Setup Search
         self.detailPanel.isSearchEnabled = true
@@ -187,12 +194,6 @@ class MainVC: UIViewController {
     
     func didFetchSchoolPins(fetchedSchoolPins: [SchoolPin]?) {
         if let pins = fetchedSchoolPins {
-            //self.schoolOffers = offers
-            //TODO: Annotations with the same coordinates
-            //for pin in pins {
-                //let offerPin = OfferPin(title: offer.name, schoolOffer: offer, coordinate: CLLocationCoordinate2D(latitude: offer.lat, longitude: offer.long))
-                //offerPins.append(offerPin)
-            //}
             self.schoolPins = pins
             self.mapView.showAnnotations(pins, animated: true)
             SVProgressHUD.showSuccess(withStatus: "Found \(pins.count) resources!")
@@ -245,38 +246,20 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
     }
 
 }
-extension MainVC: MKMapViewDelegate {
+extension MainVC: MKMapViewDelegate, FUIMKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         if let pin = view.annotation as? SchoolPin {
+            self.centerMap(location: pin.coordinate, zoom: 0.01)
             setDetailPanel(school: pin.school, offers: pin.offers)
         }
+        //TODO: Do something for NOT SchoolPin
         DispatchQueue.main.async {
             self.detailPanel.pushChildViewController()
         }
     }
-
-    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
-//        DispatchQueue.main.async {
-//            self.detailPanel.popChildViewController()
-//        }
-    }
+    
 }
 extension MainVC: UISearchBarDelegate {
-    
-//    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-//        print("Did Begin Editing")
-//    }
-
-//    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-//        print("Did End Editing")
-//        if let searchText = searchBar.searchTextField.text, searchText != "" {
-//            searchForAddreses(searchText)
-//        }
-//    }
-
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        print("Did change text")
-//    }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         print("Search button clicked")
@@ -284,10 +267,6 @@ extension MainVC: UISearchBarDelegate {
             searchForAddreses(searchText)
         }
     }
-    
-//    func searchBarResultsListButtonClicked(_ searchBar: UISearchBar) {
-//        print("list button clicked")
-//    }
     
 }
 extension MainVC: CLLocationManagerDelegate {
