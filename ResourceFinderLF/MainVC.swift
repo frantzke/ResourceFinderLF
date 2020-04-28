@@ -73,6 +73,23 @@ class MainVC: UIViewController {
             //Request Location
             locationManager?.requestWhenInUseAuthorization()
         }
+        
+        let toolbar = FUIMapToolbar(mapView: mapView)
+        //toolbar.backgroundColorScheme = .darkBackground // defaults to `.lightBackground`
+        let locationButton = FUIMapToolbar.UserLocationButton(mapView: self.mapView)
+        locationButton.removeTarget(nil, action: nil, for: .allEvents)
+        locationButton.addTarget(self, action: #selector(onLocationButtonPresed), for: .touchUpInside)
+        let zoomExtentsButton = FUIMapToolbar.ZoomExtentButton(mapView: self.mapView)
+        toolbar.items = [locationButton, zoomExtentsButton]
+    }
+    
+    @objc private func onLocationButtonPresed(_ sender: UIButton) {
+        print("Button Pressed")
+        if let location = getUserLocation() {
+            centerMap(location: location, zoom: 0.01)
+        } else {
+            print("Ask for user location data")
+        }
     }
     
     //Return User Location if enabled
