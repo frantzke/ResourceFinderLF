@@ -85,10 +85,11 @@ class MainVC: UIViewController {
     }
     
     @objc private func onLocationButtonPresed(_ sender: UIButton) {
-        print("Button Pressed")
+        print("Location Toolbar Button Pressed")
         if let location = getUserLocation() {
             centerMap(location: location, zoom: 0.01)
         } else {
+            //TODO: Do something when no user location
             print("Ask for user location data")
         }
     }
@@ -109,7 +110,7 @@ class MainVC: UIViewController {
         // Override the annotation property to customize it whenever it is set.
         override var annotation: MKAnnotation? {
             willSet {
-                if let schoolPin = newValue as? SchoolPin {
+                if newValue as? SchoolPin != nil {
                     markerTintColor = .preferredFioriColor(forStyle: .map1)
                     glyphImage = FUIIconLibrary.map.marker.cafe.withRenderingMode(.alwaysTemplate)
                 } else {
@@ -133,16 +134,7 @@ class MainVC: UIViewController {
         detailPanel.content.tableView.rowHeight = UITableView.automaticDimension
         
         detailPanel.content.closeButton.didSelectHandler = { [unowned self] _ in
-            for annotation in self.mapView.selectedAnnotations {
-                self.mapView.deselectAnnotation(annotation, animated: true)
-            }
-            self.selectedLocation = nil
-            for overlay in self.mapView.overlays {
-                if overlay as? MKPolyline != nil {
-                    self.mapView.removeOverlay(overlay)
-                }
-            }
-            self.detailPanel.popChildViewController()
+            self.dismissDetailPanel()
         }
         
         // Setup Search
@@ -155,10 +147,25 @@ class MainVC: UIViewController {
         self.detailPanel.searchResults.searchBar.delegate = self
     }
     
+    private func dismissDetailPanel() {
+        self.selectedLocation = nil
+        for annotation in self.mapView.selectedAnnotations {
+            self.mapView.deselectAnnotation(annotation, animated: true)
+        }
+        self.clearMapOverlays()
+        self.detailPanel.popChildViewController()
+    }
+    
     private func centerMap(location: CLLocationCoordinate2D, zoom: Double) {
         let span = MKCoordinateSpan(latitudeDelta: zoom, longitudeDelta: zoom)
         let region = MKCoordinateRegion(center: location, span: span)
         self.mapView.setRegion(region, animated: true)
+    }
+    
+    private func clearMapOverlays() {
+        for overlay in self.mapView.overlays {
+            self.mapView.removeOverlay(overlay)
+        }
     }
     
     private func setContentCell(cell: FUIObjectTableViewCell, detail: Detail) -> FUIObjectTableViewCell{
@@ -190,8 +197,8 @@ class MainVC: UIViewController {
         for offer in offers {
             details.append(Detail(title: offer.when, subTitle: offer.time, image: UIImage(systemName: "clock.fill")))
         }
-        if self.userLocation != nil {
-            details.append(Detail(title: "Directions", subTitle: "something", image: UIImage(systemName: "car.fill")))
+        if self.userLocation != nil || self.searchPin != nil {
+            details.append(Detail(title: "Directions", subTitle: "", image: UIImage(systemName: "car.fill")))
         }
         self.details = details
         
@@ -231,34 +238,76 @@ class MainVC: UIViewController {
         }
     }
     
-    @objc private func onDirectionsButton(sender: UIButton) {
-        print("Get directions")
-        if let userLocation = self.userLocation, let destination = self.selectedLocation {
-            let request = MKDirections.Request()
-            
-            request.source = MKMapItem(placemark: MKPlacemark(coordinate: userLocation, addressDictionary: nil))
-            request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destination, addressDictionary: nil))
-            request.requestsAlternateRoutes = false
-            request.transportType = .automobile
+    private func getDirections(source: CLLocationCoordinate2D, destination: CLLocationCoordinate2D) {
+        let request = MKDirections.Request()
+        
+        request.source = MKMapItem(placemark: MKPlacemark(coordinate: source, addressDictionary: nil))
+        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destination, addressDictionary: nil))
+        request.requestsAlternateRoutes = false
+        request.transportType = .automobile
 
-            let directions = MKDirections(request: request)
+        let directions = MKDirections(request: request)
 
-            directions.calculate { [unowned self] response, error in
-                guard let unwrappedResponse = response else { return }
+        directions.calculate { [unowned self] response, error in
+            guard let unwrappedResponse = response else { return }
+            self.clearMapOverlays()
 
-                for route in unwrappedResponse.routes {
-                    self.mapView.addOverlay(route.polyline)
-                    let mapRect = route.polyline.boundingMapRect
-                    //Zoom out the map by 10%
-                    let adjustSize = mapRect.width * 0.1
-                    let biggerRect = MKMapRect(x: mapRect.origin.x - (adjustSize/2),
-                                               y: mapRect.origin.y - (adjustSize/2),
-                                               width: mapRect.width + adjustSize,
-                                               height: mapRect.height + adjustSize)
-                    self.mapView.setVisibleMapRect(biggerRect, animated: true)
-                }
+            for route in unwrappedResponse.routes {
+                self.mapView.addOverlay(route.polyline)
+                let mapRect = route.polyline.boundingMapRect
+                //Zoom out the map by 10%
+                let adjustSize = mapRect.width * 0.1
+                let biggerRect = MKMapRect(x: mapRect.origin.x - (adjustSize/2),
+                                           y: mapRect.origin.y - (adjustSize/2),
+                                           width: mapRect.width + adjustSize,
+                                           height: mapRect.height + adjustSize)
+                self.mapView.setVisibleMapRect(biggerRect, animated: true)
             }
+            //TODO: Partially Dismiss Detail Panel
+            //self.mapView.selectAnnotation(MKPointAnnotation(coordinate: self.searchPin!.coordinate), animated: true)
         }
+    }
+    
+    //MARK: Actions
+    
+    private func onAddressSelect(_ mapItem: MKMapItem) {
+        //Remove previous pin if it exists
+        if let prevPin = searchPin {
+            mapView.removeAnnotations([prevPin])
+        }
+        //Remove old SchoolPins. Will get new pins
+        mapView.removeAnnotations(schoolPins)
+        schoolPins = [SchoolPin]()
+        //Place New AddressPin
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = mapItem.placemark.coordinate
+        annotation.title = mapItem.name
+        annotation.subtitle = mapItem.placemark.title
+        mapView.showAnnotations([annotation], animated: true)
+        searchPin = annotation
+        //Get new SchoolPins
+        fetchSchoolOffers(location: mapItem.placemark.coordinate)
+        
+        self.detailPanel.searchResults.searchBar.endEditing(true)
+        DispatchQueue.main.async {
+            self.detailPanel.popChildViewController()
+        }
+    }
+    
+    @objc private func onDirectionsButton(sender: UIButton) {
+        guard let destination = self.selectedLocation else {
+            print("ERROR: No destination given")
+            return
+        }
+        let source: CLLocationCoordinate2D
+        if let searchLocation = self.searchPin?.coordinate {
+            source = searchLocation
+        } else if let userLocation = self.userLocation {
+            source = userLocation
+        } else {
+            return
+        }
+        getDirections(source: source, destination: destination)
     }
     
     //MARK: Backend Calls
@@ -307,24 +356,9 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Did select row at: \(indexPath.row)")
-        //Place search pin
-        let searchItem = searchResults[indexPath.row]
-        let annotation = MKPointAnnotation()
-        annotation.coordinate = searchItem.placemark.coordinate
-        annotation.title = searchItem.name
-        annotation.subtitle = searchItem.placemark.title
-        if let prevPin = searchPin {
-            mapView.removeAnnotations([prevPin])
-        }
-        mapView.removeAnnotations(schoolPins)
-        searchPin = annotation
-        schoolPins = [SchoolPin]()
-        mapView.showAnnotations([annotation], animated: true)
-        fetchSchoolOffers(location: searchItem.placemark.coordinate)
-        self.detailPanel.searchResults.searchBar.endEditing(true)
-        DispatchQueue.main.async {
-            self.detailPanel.popChildViewController()
+        if tableView == detailPanel.searchResults.tableView {
+            let searchItem = searchResults[indexPath.row]
+            onAddressSelect(searchItem)
         }
     }
 
