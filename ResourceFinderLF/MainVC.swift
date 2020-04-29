@@ -197,6 +197,26 @@ class MainVC: UIViewController {
         return nil
     }
     
+    private func askPermission() {
+        let msg = "Would you like to enable location services in Settings > Privacy > Location Services > Resource Finder"
+        let alertController = UIAlertController (title: "Location Services Disabled", message: msg, preferredStyle: .alert)
+        let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) -> Void in
+            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+                return
+            }
+            if UIApplication.shared.canOpenURL(settingsUrl) {
+                UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
+                    print("Settings opened: \(success)") // Prints true
+                })
+            }
+        }
+        alertController.addAction(settingsAction)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+        alertController.addAction(cancelAction)
+        
+        detailPanel.searchResults.present(alertController, animated: true, completion: nil)
+    }
+    
     private func searchForAddreses(_ searchText: String) {
         let searchRequest = MKLocalSearch.Request()
         searchRequest.naturalLanguageQuery = searchText
@@ -252,8 +272,7 @@ class MainVC: UIViewController {
         if let location = getUserLocation() {
             centerMap(location: location, zoom: 0.01)
         } else {
-            //TODO: Do something when no user location
-            print("Ask for user location data")
+            askPermission()
         }
     }
     
@@ -373,11 +392,12 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
 extension MainVC: MKMapViewDelegate, FUIMKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         if let pin = view.annotation as? SchoolPin {
-            self.centerMap(location: pin.coordinate, zoom: 0.01)
+            clearMapOverlays()
+            centerMap(location: pin.coordinate, zoom: 0.01)
             setDetailPanel(school: pin.school, offers: pin.offers)
         } else if let annotation = view.annotation {
-            self.centerMap(location: annotation.coordinate, zoom: 0.01)
-            self.setAddressPanel(annotation)
+            centerMap(location: annotation.coordinate, zoom: 0.01)
+            setAddressPanel(annotation)
         }
         selectedLocation = view.annotation?.coordinate
         DispatchQueue.main.async {
@@ -406,6 +426,11 @@ extension MainVC: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if status == .authorizedWhenInUse {
             mapView.showsUserLocation = true
+            if let userLocation = getUserLocation() {
+                self.userLocation = userLocation
+                centerMap(location: userLocation, zoom: 0.01)
+                fetchSchoolOffers(location: userLocation)
+            }
         } else {
             print("Failed to get user location")
         }
