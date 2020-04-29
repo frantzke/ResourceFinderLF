@@ -33,6 +33,8 @@ class MainVC: UIViewController {
     var searchResults = [MKMapItem]()
     var searchPin: MKPointAnnotation?
     
+    //MARK: Initialization
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -50,8 +52,6 @@ class MainVC: UIViewController {
         super.viewWillDisappear(animated)
         presentedViewController?.dismiss(animated: false, completion: nil)
     }
-    
-    //MARK: Private Methods
     
     private func setupView() {
         mapView.delegate = self
@@ -75,51 +75,13 @@ class MainVC: UIViewController {
             locationManager?.requestWhenInUseAuthorization()
         }
         
+        //Setup map toolbar
         let toolbar = FUIMapToolbar(mapView: mapView)
-        //toolbar.backgroundColorScheme = .darkBackground // defaults to `.lightBackground`
         let locationButton = FUIMapToolbar.UserLocationButton(mapView: self.mapView)
         locationButton.removeTarget(nil, action: nil, for: .allEvents)
         locationButton.addTarget(self, action: #selector(onLocationButtonPresed), for: .touchUpInside)
         let zoomExtentsButton = FUIMapToolbar.ZoomExtentButton(mapView: self.mapView)
         toolbar.items = [locationButton, zoomExtentsButton]
-    }
-    
-    @objc private func onLocationButtonPresed(_ sender: UIButton) {
-        print("Location Toolbar Button Pressed")
-        if let location = getUserLocation() {
-            centerMap(location: location, zoom: 0.01)
-        } else {
-            //TODO: Do something when no user location
-            print("Ask for user location data")
-        }
-    }
-    
-    //Return User Location if enabled
-    private func getUserLocation() -> CLLocationCoordinate2D? {
-        if CLLocationManager.locationServicesEnabled(),
-            CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
-            if let userLocation = locationManager?.location?.coordinate {
-                return userLocation
-            }
-        }
-        return nil
-    }
-    
-    private class FioriMarker: FUIMarkerAnnotationView {
-
-        // Override the annotation property to customize it whenever it is set.
-        override var annotation: MKAnnotation? {
-            willSet {
-                if newValue as? SchoolPin != nil {
-                    markerTintColor = .preferredFioriColor(forStyle: .map1)
-                    glyphImage = FUIIconLibrary.map.marker.cafe.withRenderingMode(.alwaysTemplate)
-                } else {
-                    markerTintColor = .preferredFioriColor(forStyle: .positive)
-                    glyphImage = FUIIconLibrary.system.me.withRenderingMode(.alwaysTemplate)
-                }
-                displayPriority = .required
-            }
-        }
     }
     
     private func setupDetailPanel() {
@@ -147,14 +109,23 @@ class MainVC: UIViewController {
         self.detailPanel.searchResults.searchBar.delegate = self
     }
     
-    private func dismissDetailPanel() {
-        self.selectedLocation = nil
-        for annotation in self.mapView.selectedAnnotations {
-            self.mapView.deselectAnnotation(annotation, animated: true)
+    //Customize map Annotation Markers
+    private class FioriMarker: FUIMarkerAnnotationView {
+        override var annotation: MKAnnotation? {
+            willSet {
+                if newValue as? SchoolPin != nil {
+                    markerTintColor = .preferredFioriColor(forStyle: .map1)
+                    glyphImage = FUIIconLibrary.map.marker.cafe.withRenderingMode(.alwaysTemplate)
+                } else {
+                    markerTintColor = .preferredFioriColor(forStyle: .positive)
+                    glyphImage = FUIIconLibrary.system.me.withRenderingMode(.alwaysTemplate)
+                }
+                displayPriority = .required
+            }
         }
-        self.clearMapOverlays()
-        self.detailPanel.popChildViewController()
     }
+    
+    //MARK: MapView Methods
     
     private func centerMap(location: CLLocationCoordinate2D, zoom: Double) {
         let span = MKCoordinateSpan(latitudeDelta: zoom, longitudeDelta: zoom)
@@ -168,22 +139,15 @@ class MainVC: UIViewController {
         }
     }
     
-    private func setContentCell(cell: FUIObjectTableViewCell, detail: Detail) -> FUIObjectTableViewCell{
-        cell.backgroundColor = UIColor.clear
-        cell.headlineText = detail.title
-        cell.subheadlineText = detail.subTitle
-        cell.tintColor = .preferredFioriColor(forStyle: .map1)
-        cell.detailImage = detail.image
-        cell.isUserInteractionEnabled = false
-        return cell
-    }
+    //MARK: DetailPanel Methods
     
-    private func setSearchCell(cell: FUIObjectTableViewCell, searchResult: MKMapItem) -> FUIObjectTableViewCell {
-        let placemark = searchResult.placemark
-        cell.headlineText = searchResult.name
-        cell.subheadlineText = placemark.title
-        cell.isUserInteractionEnabled = true
-        return cell
+    private func dismissDetailPanel() {
+        self.selectedLocation = nil
+        for annotation in self.mapView.selectedAnnotations {
+            self.mapView.deselectAnnotation(annotation, animated: true)
+        }
+        self.clearMapOverlays()
+        self.detailPanel.popChildViewController()
     }
     
     private func setDetailPanel(school: School, offers: [Offer]) {
@@ -218,6 +182,19 @@ class MainVC: UIViewController {
             self.details = [Detail]()
         }
         detailPanel.content.tableView.reloadData()
+    }
+    
+    //MARK: Private Methods
+    
+    //Return User Location if enabled
+    private func getUserLocation() -> CLLocationCoordinate2D? {
+        if CLLocationManager.locationServicesEnabled(),
+            CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
+            if let userLocation = locationManager?.location?.coordinate {
+                return userLocation
+            }
+        }
+        return nil
     }
     
     private func searchForAddreses(_ searchText: String) {
@@ -270,6 +247,16 @@ class MainVC: UIViewController {
     
     //MARK: Actions
     
+    @objc private func onLocationButtonPresed(_ sender: UIButton) {
+        print("Location Toolbar Button Pressed")
+        if let location = getUserLocation() {
+            centerMap(location: location, zoom: 0.01)
+        } else {
+            //TODO: Do something when no user location
+            print("Ask for user location data")
+        }
+    }
+    
     private func onAddressSelect(_ mapItem: MKMapItem) {
         //Remove previous pin if it exists
         if let prevPin = searchPin {
@@ -311,6 +298,7 @@ class MainVC: UIViewController {
     }
     
     //MARK: Backend Calls
+    
     private func fetchSchoolOffers(location: CLLocationCoordinate2D) {
         SVProgressHUD.show(withStatus: "Searching for resources")
         SchoolOfferManager.getSchoolPins(lat: location.latitude, long: location.longitude, dist: 150, callback: didFetchSchoolPins)
@@ -327,6 +315,25 @@ class MainVC: UIViewController {
     
 }
 extension MainVC: UITableViewDelegate, UITableViewDataSource {
+    
+    private func setContentCell(cell: FUIObjectTableViewCell, detail: Detail) -> FUIObjectTableViewCell{
+        cell.backgroundColor = UIColor.clear
+        cell.headlineText = detail.title
+        cell.subheadlineText = detail.subTitle
+        cell.tintColor = .preferredFioriColor(forStyle: .map1)
+        cell.detailImage = detail.image
+        cell.isUserInteractionEnabled = false
+        return cell
+    }
+    
+    private func setSearchCell(cell: FUIObjectTableViewCell, searchResult: MKMapItem) -> FUIObjectTableViewCell {
+        let placemark = searchResult.placemark
+        cell.headlineText = searchResult.name
+        cell.subheadlineText = placemark.title
+        cell.isUserInteractionEnabled = true
+        return cell
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableView == self.detailPanel.searchResults.tableView {
             return searchResults.count
@@ -393,11 +400,6 @@ extension MainVC: UISearchBarDelegate {
             searchForAddreses(searchText)
         }
     }
-    
-//    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-//        searchBar.text = ""
-//        searchBar.endEditing(true)
-//    }
     
 }
 extension MainVC: CLLocationManagerDelegate {
