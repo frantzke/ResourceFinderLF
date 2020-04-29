@@ -25,6 +25,7 @@ class MainVC: UIViewController {
     
     var locationManager: CLLocationManager?
     var userLocation: CLLocationCoordinate2D?
+    var selectedLocation: CLLocationCoordinate2D?
     var detailPanel: FUIMapDetailPanel!
     
     var details = [Detail]()
@@ -127,12 +128,19 @@ class MainVC: UIViewController {
         detailPanel.content.tableView.dataSource = self
         detailPanel.content.tableView.delegate = self
         detailPanel.content.tableView.register(FUIObjectTableViewCell.self, forCellReuseIdentifier:  FUIObjectTableViewCell.reuseIdentifier)
+        detailPanel.content.tableView.register(FUIMapDetailPanel.ButtonTableViewCell.self, forCellReuseIdentifier: FUIMapDetailPanel.ButtonTableViewCell.reuseIdentifier)
         detailPanel.content.tableView.estimatedRowHeight = 60
         detailPanel.content.tableView.rowHeight = UITableView.automaticDimension
         
         detailPanel.content.closeButton.didSelectHandler = { [unowned self] _ in
             for annotation in self.mapView.selectedAnnotations {
                 self.mapView.deselectAnnotation(annotation, animated: true)
+            }
+            self.selectedLocation = nil
+            for overlay in self.mapView.overlays {
+                if overlay as? MKPolyline != nil {
+                    self.mapView.removeOverlay(overlay)
+                }
             }
             self.detailPanel.popChildViewController()
         }
@@ -182,6 +190,9 @@ class MainVC: UIViewController {
         for offer in offers {
             details.append(Detail(title: offer.when, subTitle: offer.time, image: UIImage(systemName: "clock.fill")))
         }
+        if self.userLocation != nil {
+            details.append(Detail(title: "Directions", subTitle: "something", image: UIImage(systemName: "car.fill")))
+        }
         self.details = details
         
         detailPanel.content.tableView.reloadData()
@@ -220,6 +231,36 @@ class MainVC: UIViewController {
         }
     }
     
+    @objc private func onDirectionsButton(sender: UIButton) {
+        print("Get directions")
+        if let userLocation = self.userLocation, let destination = self.selectedLocation {
+            let request = MKDirections.Request()
+            
+            request.source = MKMapItem(placemark: MKPlacemark(coordinate: userLocation, addressDictionary: nil))
+            request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destination, addressDictionary: nil))
+            request.requestsAlternateRoutes = false
+            request.transportType = .automobile
+
+            let directions = MKDirections(request: request)
+
+            directions.calculate { [unowned self] response, error in
+                guard let unwrappedResponse = response else { return }
+
+                for route in unwrappedResponse.routes {
+                    self.mapView.addOverlay(route.polyline)
+                    let mapRect = route.polyline.boundingMapRect
+                    //Zoom out the map by 10%
+                    let adjustSize = mapRect.width * 0.1
+                    let biggerRect = MKMapRect(x: mapRect.origin.x - (adjustSize/2),
+                                               y: mapRect.origin.y - (adjustSize/2),
+                                               width: mapRect.width + adjustSize,
+                                               height: mapRect.height + adjustSize)
+                    self.mapView.setVisibleMapRect(biggerRect, animated: true)
+                }
+            }
+        }
+    }
+    
     //MARK: Backend Calls
     private func fetchSchoolOffers(location: CLLocationCoordinate2D) {
         SVProgressHUD.show(withStatus: "Searching for resources")
@@ -247,8 +288,15 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if tableView == self.detailPanel.content.tableView {
-            let detailCell = tableView.dequeueReusableCell(withIdentifier: FUIObjectTableViewCell.reuseIdentifier, for: indexPath) as! FUIObjectTableViewCell
             let detail = details[indexPath.row]
+            if detail.title == "Directions" {
+                let cell = tableView.dequeueReusableCell(withIdentifier: FUIMapDetailPanel.ButtonTableViewCell.reuseIdentifier, for: indexPath) as! FUIMapDetailPanel.ButtonTableViewCell
+                cell.buttonHeadlineText = "Directions"
+                cell.button.backgroundColor = UIColor.preferredFioriColor(forStyle: .map1)
+                cell.button.addTarget(self, action: #selector(onDirectionsButton), for: .touchUpInside)
+                return cell
+            }
+            let detailCell = tableView.dequeueReusableCell(withIdentifier: FUIObjectTableViewCell.reuseIdentifier, for: indexPath) as! FUIObjectTableViewCell
             return setContentCell(cell: detailCell, detail: detail)
         } else {
             let searchCell = tableView.dequeueReusableCell(withIdentifier: FUIObjectTableViewCell.reuseIdentifier, for: indexPath) as! FUIObjectTableViewCell
@@ -290,9 +338,16 @@ extension MainVC: MKMapViewDelegate, FUIMKMapViewDelegate {
             self.centerMap(location: annotation.coordinate, zoom: 0.01)
             self.setAddressPanel(annotation)
         }
+        selectedLocation = view.annotation?.coordinate
         DispatchQueue.main.async {
             self.detailPanel.pushChildViewController()
         }
+    }
+    
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        let renderer = MKPolylineRenderer(polyline: overlay as! MKPolyline)
+        renderer.strokeColor = UIColor.systemBlue
+        return renderer
     }
     
 }
