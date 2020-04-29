@@ -11,6 +11,7 @@ import MapKit
 import SAPFiori
 import SAPOData
 import SVProgressHUD
+import SPPermissions
 
 struct Detail {
     var title: String
@@ -32,6 +33,7 @@ class MainVC: UIViewController {
     var schoolPins = [SchoolPin]()
     var searchResults = [MKMapItem]()
     var searchPin: MKPointAnnotation?
+    var isNotDetermined = false
     
     //MARK: Initialization
     
@@ -45,6 +47,13 @@ class MainVC: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         detailPanel.presentContainer()
+        if let location = getUserLocation() {
+            self.userLocation = location
+            centerMap(location: location, zoom: 0.01)
+            fetchSchoolOffers(location: location)
+        } else if isNotDetermined {
+            showPermissions()
+        }
     }
 
     // Dismisses the detail panel whenever the map view disappears.
@@ -56,6 +65,9 @@ class MainVC: UIViewController {
     private func setupView() {
         mapView.delegate = self
         mapView.register(FioriMarker.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
+        //Center Map on U.S.
+        let USCenter = CLLocationCoordinate2D(latitude: 39.829219, longitude: -98.579394)
+        centerMap(location: USCenter, zoom: 50)
         
         locationManager = CLLocationManager()
         locationManager?.delegate = self
@@ -63,17 +75,8 @@ class MainVC: UIViewController {
         setupDetailPanel()
         
         //Check if we are allowed to have the user's location
-        if let location = getUserLocation() {
-            self.userLocation = location
-            centerMap(location: location, zoom: 0.01)
-            fetchSchoolOffers(location: location)
-        } else {
-            //Center Map on U.S.
-            let USCenter = CLLocationCoordinate2D(latitude: 39.829219, longitude: -98.579394)
-            centerMap(location: USCenter, zoom: 50)
             //Request Location
-            locationManager?.requestWhenInUseAuthorization()
-        }
+            //locationManager?.requestWhenInUseAuthorization()
         
         //Setup map toolbar
         let toolbar = FUIMapToolbar(mapView: mapView)
@@ -197,6 +200,22 @@ class MainVC: UIViewController {
         return nil
     }
     
+    private func showPermissions() {
+        let controller = SPPermissions.dialog([.locationWhenInUse])
+        // Overide texts in controller
+        //TODO: Better text
+        controller.titleText = "Title Text"
+        controller.headerText = "Header Text"
+        controller.footerText = "Footer Text"
+
+        // Set `DataSource` or `Delegate` if need.
+        // By default using project texts and icons.
+        controller.dataSource = self
+
+        // Always use this method for present
+        controller.present(on: detailPanel.searchResults)
+    }
+    
     private func askPermission() {
         let msg = "Would you like to enable location services in Settings > Privacy > Location Services > Resource Finder"
         let alertController = UIAlertController (title: "Location Services Disabled", message: msg, preferredStyle: .alert)
@@ -272,7 +291,8 @@ class MainVC: UIViewController {
         if let location = getUserLocation() {
             centerMap(location: location, zoom: 0.01)
         } else {
-            askPermission()
+            showPermissions()
+            //askPermission()
         }
     }
     
@@ -424,15 +444,25 @@ extension MainVC: UISearchBarDelegate {
 }
 extension MainVC: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if status == .authorizedWhenInUse {
+        switch status {
+        case .authorizedWhenInUse:
             mapView.showsUserLocation = true
             if let userLocation = getUserLocation() {
                 self.userLocation = userLocation
                 centerMap(location: userLocation, zoom: 0.01)
                 fetchSchoolOffers(location: userLocation)
             }
-        } else {
-            print("Failed to get user location")
+        case .notDetermined:
+            isNotDetermined = true
+        default:
+            print("Denied user location")
         }
+    }
+}
+extension MainVC: SPPermissionsDataSource {
+    func configure(_ cell: SPPermissionTableViewCell, for permission: SPPermission) -> SPPermissionTableViewCell {
+        cell.permissionTitleLabel.text = "Location When in Use"
+        cell.permissionDescriptionLabel.text = "Allow access to your location"
+        return cell
     }
 }

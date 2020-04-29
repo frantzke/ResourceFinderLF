@@ -1,12 +1,16 @@
 PODS:
   - Alamofire (4.9.0)
   - IQKeyboardManagerSwift (6.5.1)
+  - SPPermissions/Core (5.3.2)
+  - SPPermissions/Location (5.3.2):
+    - SPPermissions/Core
   - SVProgressHUD (2.2.5)
   - SwiftyJSON (4.3.0)
 
 DEPENDENCIES:
   - Alamofire
   - IQKeyboardManagerSwift
+  - SPPermissions/Location
   - SVProgressHUD (~> 2.2)
   - SwiftyJSON (~> 4.0)
 
@@ -14,15 +18,17 @@ SPEC REPOS:
   trunk:
     - Alamofire
     - IQKeyboardManagerSwift
+    - SPPermissions
     - SVProgressHUD
     - SwiftyJSON
 
 SPEC CHECKSUMS:
   Alamofire: afc3e7c6db61476cb45cdd23fed06bad03bbc321
   IQKeyboardManagerSwift: 9ac7524fad9f9fe9a3b98c927e7772471ca546d2
+  SPPermissions: f1f82ba07d1a07e1d73521b19e7c3550b0bc0ddb
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
   SwiftyJSON: 6faa0040f8b59dead0ee07436cbf76b73c08fd08
 
-PODFILE CHECKSUM: 8fe05d3686f5e0921512bdfc9407ef5afa856219
+PODFILE CHECKSUM: 93ca55d6d7017c0c6bc4500e74530d38827e3906
 
 COCOAPODS: 1.8.4

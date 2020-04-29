@@ -6,5 +6,6 @@ target 'ResourceFinderLF' do
   pod 'Alamofire'
   pod 'SwiftyJSON', '~> 4.0'
   pod 'SVProgressHUD', '~> 2.2'
+  pod 'SPPermissions/Location'
 
 end
