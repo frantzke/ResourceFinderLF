@@ -163,8 +163,10 @@ class MainVC: UIViewController {
             Detail(title: "Who", subTitle: school.who, image: UIImage(systemName: "person.circle.fill")),
             Detail(title: "From", subTitle: school.datesInterval, image: UIImage(systemName: "clock.fill")),
         ]
-        let foodIcon = FUIIconLibrary.map.marker.cafe.withRenderingMode(.automatic)
-        for offer in offers {
+        //let foodIcon = FUIIconLibrary.map.marker.cafe.withRenderingMode(.automatic)
+        let foodIcon = UIImage(named: "food-icon")
+        let sortedOffers = offers.sorted(by: { $0.sortOrder < $1.sortOrder })
+        for offer in sortedOffers {
             details.append(Detail(title: offer.when, subTitle: offer.time, image: foodIcon))
         }
         if self.userLocation != nil || self.searchPin != nil {

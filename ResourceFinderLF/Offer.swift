@@ -45,6 +45,20 @@ class Offer {
     var time: String {
         return "\(from ?? "") - \(to ?? "")"
     }
+    var sortOrder: Int {
+        switch assistanceSubtype {
+        case "Breakfast":
+            return 0
+        case "Snack":
+            return 1
+        case "Lunch":
+            return 2
+        case "Dinner":
+            return 3
+        default:
+            return 4
+        }
+    }
     
     init(id: String, addressId: String, type: String) {
         self.id = id

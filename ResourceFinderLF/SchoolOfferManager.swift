@@ -55,7 +55,7 @@ class SchoolOfferManager {
                 let schoolOffer = self.jsonToSchoolOffer(jsonSchoolOffer)
                 //Filter out offers where end date is after todays date.
                 if schoolOffer.school.endDateValue == nil {
-                    print("nil")
+                    print("End date was nil")
                 }
                 if let endDate = schoolOffer.school.endDateValue, endDate.compare(today) == .orderedDescending {
                     //Check if School is already in SchoolPins
@@ -73,6 +73,8 @@ class SchoolOfferManager {
                         schoolPin.offers.append(schoolOffer.offer)
                         schoolPins.append(schoolPin)
                     }
+                } else {
+                    print("End date after todays date")
                 }
             }
             
