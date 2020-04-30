@@ -15,6 +15,7 @@ class SchoolOfferManager {
     
     static let serviceRoot = "https://sap4good-dev-sap4kids-srv.cfapps.us10.hana.ondemand.com/map"
     
+    //Call backend for SchoolOffers. Return SchoolPins array, or in case of error nil
     static func getSchoolPins(lat: Double, long: Double, dist: Int, callback: @escaping ([SchoolPin]?) -> Void ) {
         //let eligibilityCat = "36a00731-7f07-42a8-a141-f4303d41a10b"
         //let assistSubType = "03487ac3-e0db-43af-852b-2ebf198e3a0f"
@@ -33,41 +34,46 @@ class SchoolOfferManager {
         Alamofire.request(url, method: .get, headers: headers)
         .validate(contentType: ["application/json;odata.metadata=minimal"])
         .responseJSON { response in
+            //Handle Error
             guard response.result.isSuccess, let responseValue = response.result.value else {
                 print("Error while fetching projects: \(String(describing: response.result.error))")
                 callback(nil)
                 return
             }
-            
+            //Convert JSON to Swift Readable Object
             let jsonResult = JSON(responseValue)
             var schoolPins = [SchoolPin]()
-            //var fetchedSchoolOffers = [SchoolOffer]()
-
             guard let jsonSchoolOffers = jsonResult["value"].array else {
+                //If no value array, return empty array
                 callback([SchoolPin]())
                 return
             }
             
-            
-            // Convert JSON SchoolOffer Array to Swift SchoolOffer Array
+            // Convert JSON SchoolOffer Array to Swift SchoolPins Array
+            let today = Date()
             for jsonSchoolOffer in jsonSchoolOffers {
                 let schoolOffer = self.jsonToSchoolOffer(jsonSchoolOffer)
-                //Check if School is already in SchoolPins
-                if let index = schoolPins.firstIndex(where: { $0.school == schoolOffer.school }) {
-                    //If School already in SchoolPins: Append offer to existing schoolPin and update SchoolPins
-                    let schoolPin = schoolPins[index]
-                    schoolPin.offers.append(schoolOffer.offer)
-                    schoolPins[index] = schoolPin
-                } else {
-                    //If School not in School Pins: Create new schoolPin, append offer, and add to SchoolPins
-                    let schoolPin = SchoolPin(
-                        title: schoolOffer.school.name,
-                        school: schoolOffer.school,
-                        coordinate: CLLocationCoordinate2D(latitude: schoolOffer.school.lat, longitude: schoolOffer.school.long))
-                    schoolPin.offers.append(schoolOffer.offer)
-                    schoolPins.append(schoolPin)
+                //Filter out offers where end date is after todays date.
+                if schoolOffer.school.endDateValue == nil {
+                    print("nil")
                 }
-                //fetchedSchoolOffers.append(schoolOffer)
+                if let endDate = schoolOffer.school.endDateValue, endDate.compare(today) == .orderedDescending {
+                    //Check if School is already in SchoolPins
+                    if let index = schoolPins.firstIndex(where: { $0.school == schoolOffer.school }) {
+                        //If School already in SchoolPins: Append offer to existing SchoolPin and update SchoolPins
+                        let schoolPin = schoolPins[index]
+                        schoolPin.offers.append(schoolOffer.offer)
+                        schoolPins[index] = schoolPin
+                    } else {
+                        //If School not in School Pins: Create new schoolPin, append offer, and add to SchoolPins
+                        let schoolPin = SchoolPin(
+                            title: schoolOffer.school.name,
+                            school: schoolOffer.school,
+                            coordinate: CLLocationCoordinate2D(latitude: schoolOffer.school.lat, longitude: schoolOffer.school.long))
+                        schoolPin.offers.append(schoolOffer.offer)
+                        schoolPins.append(schoolPin)
+                    }
+                }
             }
             
             //TODO: Use Sets to improve runtime
@@ -102,8 +108,8 @@ class SchoolOfferManager {
         offer.fri = jSchoolOffer["AVAILABLEFRI"].bool
         offer.sat = jSchoolOffer["AVAILABLESAT"].bool
         offer.sun = jSchoolOffer["AVAILABLESUN"].bool
-        offer.startDate = jSchoolOffer["STARTDATE"].string
-        offer.startDate = jSchoolOffer["ENDDATE"].string
+//        offer.startDate =
+//        offer.endDate =
         //offer.elegibilityCategory = jSchoolOffer["ELIGIBILITYCATEGORY"].string
         offer.description = jSchoolOffer["DESCRIPTION"].string
         offer.assistanceType = jSchoolOffer["ASSISTANCETYPE"].string
@@ -131,7 +137,9 @@ class SchoolOfferManager {
             contactTitle: jSchoolOffer["CONTACTTITLE"].string,
             pickup: jSchoolOffer["PICKUPIND"].bool,
             delivery: jSchoolOffer["DELIVERYIND"].bool,
-            elegibilityCategory: jSchoolOffer["ELIGIBILITYCATEGORY"].string)
+            elegibilityCategory: jSchoolOffer["ELIGIBILITYCATEGORY"].string,
+            startDate: jSchoolOffer["STARTDATE"].string,
+            endDate: jSchoolOffer["ENDDATE"].string)
 
         let schoolOffer = SchoolOffer(school: school, offer: offer)
         return schoolOffer

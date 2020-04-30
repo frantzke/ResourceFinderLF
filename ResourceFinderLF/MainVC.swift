@@ -47,11 +47,12 @@ class MainVC: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         detailPanel.presentContainer()
-        if let location = getUserLocation() {
-            self.userLocation = location
-            centerMap(location: location, zoom: 0.01)
-            fetchSchoolOffers(location: location)
-        } else if isNotDetermined {
+//        if let location = getUserLocation() {
+//            self.userLocation = location
+//            centerMap(location: location, zoom: 0.01)
+//            fetchSchoolOffers(location: location)
+//        } else
+        if isNotDetermined {
             showPermissions()
         }
     }
@@ -160,9 +161,11 @@ class MainVC: UIViewController {
         var details = [
             Detail(title: "How", subTitle: school.how, image: UIImage(systemName: "questionmark.circle.fill")),
             Detail(title: "Who", subTitle: school.who, image: UIImage(systemName: "person.circle.fill")),
+            Detail(title: "From", subTitle: school.datesInterval, image: UIImage(systemName: "clock.fill")),
         ]
+        let foodIcon = FUIIconLibrary.map.marker.cafe.withRenderingMode(.automatic)
         for offer in offers {
-            details.append(Detail(title: offer.when, subTitle: offer.time, image: UIImage(systemName: "clock.fill")))
+            details.append(Detail(title: offer.when, subTitle: offer.time, image: foodIcon))
         }
         if self.userLocation != nil || self.searchPin != nil {
             details.append(Detail(title: "Directions", subTitle: "", image: UIImage(systemName: "car.fill")))
@@ -283,7 +286,7 @@ class MainVC: UIViewController {
                                            height: mapRect.height + adjustSize)
                 self.mapView.setVisibleMapRect(biggerRect, animated: true)
             }
-            SVProgressHUD.showSuccess(withStatus: "Directions Found!")
+            SVProgressHUD.dismiss()
             
             //TODO: Partially Dismiss Detail Panel
             //self.detailPanel.searchResults.searchBar.endEditing(true)

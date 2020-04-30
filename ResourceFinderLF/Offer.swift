@@ -20,8 +20,6 @@ class Offer {
     var fri: Bool?
     var sat: Bool?
     var sun: Bool?
-    var startDate: String?
-    var endDate: String?
     var elegibilityCategory: String?
     var description: String?
     var assistanceSubtype: String

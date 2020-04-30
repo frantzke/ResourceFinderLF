@@ -29,6 +29,8 @@ struct School: Hashable {
     var pickup: Bool?
     var delivery: Bool?
     var elegibilityCategory: String?
+    var startDate: String?
+    var endDate: String?
     //Calculated Properties
     var address: String {
         return "\(street ?? ""), \(city ?? "") \(stateCode ?? "")"
@@ -41,5 +43,30 @@ struct School: Hashable {
     }
     var who: String {
         return elegibilityCategory ?? ""
+    }
+    var startDateValue: Date? {
+        if let dateStr = startDate, dateStr != "" {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            return dateFormatter.date(from: dateStr)
+        }
+        return nil
+    }
+    var endDateValue: Date? {
+        if let dateStr = endDate, dateStr != "" {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            return dateFormatter.date(from: dateStr)
+        }
+        return nil
+    }
+    var datesInterval: String {
+        let df = DateFormatter()
+        df.dateStyle = .short
+        df.timeStyle = .none
+        df.dateFormat = "MMM d"
+        let start = df.string(from: startDateValue ?? Date())
+        let end = df.string(from: endDateValue ?? Date())
+        return "\(start) to \(end)"
     }
 }
