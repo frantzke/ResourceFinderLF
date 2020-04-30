@@ -90,18 +90,18 @@ class MainVC: UIViewController {
     
     private func setupDetailPanel() {
         detailPanel = FUIMapDetailPanel(parentViewController: self, mapView: mapView)
-
+        detailPanel.isApplyingBlurBackground = true
         // Setup Content
+        //detailPanel.content.tableView.isApp
+        detailPanel.content.closeButton.didSelectHandler = { [unowned self] _ in
+            self.dismissDetailPanel()
+        }
         detailPanel.content.tableView.dataSource = self
         detailPanel.content.tableView.delegate = self
         detailPanel.content.tableView.register(FUIObjectTableViewCell.self, forCellReuseIdentifier:  FUIObjectTableViewCell.reuseIdentifier)
         detailPanel.content.tableView.register(FUIMapDetailPanel.ButtonTableViewCell.self, forCellReuseIdentifier: FUIMapDetailPanel.ButtonTableViewCell.reuseIdentifier)
         detailPanel.content.tableView.estimatedRowHeight = 60
         detailPanel.content.tableView.rowHeight = UITableView.automaticDimension
-        
-        detailPanel.content.closeButton.didSelectHandler = { [unowned self] _ in
-            self.dismissDetailPanel()
-        }
         
         // Setup Search
         self.detailPanel.isSearchEnabled = true
@@ -388,6 +388,8 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
         cell.headlineText = searchResult.name
         cell.subheadlineText = placemark.title
         cell.isUserInteractionEnabled = true
+        cell.backgroundColor = UIColor.clear
+        cell.tintColor = .preferredFioriColor(forStyle: .map1)
         return cell
     }
     
