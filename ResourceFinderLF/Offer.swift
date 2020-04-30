@@ -28,6 +28,18 @@ class Offer {
     var assistanceTypeDescription: String?
     var addressId: String
     //Calculated Properties
+    var stringToTime: DateFormatter {
+        let stringToTime = DateFormatter()
+        stringToTime.dateStyle = .none
+        stringToTime.dateFormat = "HH:mm:ss"
+        return stringToTime
+    }
+    var timeToString: DateFormatter {
+        let timeToString = DateFormatter()
+        timeToString.dateStyle = .none
+        timeToString.dateFormat = "h:mm a"
+        return timeToString
+    }
     var when: String {
         var whenStr = "\(assistanceSubtype) ("
         whenStr += mon ?? false ? "Mo, " : ""
@@ -43,6 +55,11 @@ class Offer {
         return whenStr
     }
     var time: String {
+        if let fromTime = stringToTime.date(from: from ?? ""), let toTime = stringToTime.date(from: to ?? "") {
+            let fromStr = timeToString.string(from: fromTime)
+            let toStr = timeToString.string(from: toTime)
+            return "\(fromStr) - \(toStr)"
+        }
         return "\(from ?? "") - \(to ?? "")"
     }
     var sortOrder: Int {

@@ -291,6 +291,12 @@ class MainVC: UIViewController {
             SVProgressHUD.dismiss()
             
             //TODO: Partially Dismiss Detail Panel
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                self.detailPanel.pushChildViewController(completion: {
+                    print("DID PUSH CHILDVIEWCONTROLLER")
+                })
+            }
+            //self.detailPanel.pushChildViewController()
             //self.detailPanel.searchResults.searchBar.endEditing(true)
             //self.detailPanel.content.endAppearanceTransition()
             //self.mapView.selectAnnotation(MKPointAnnotation(coordinate: self.searchPin!.coordinate), animated: true)
@@ -344,6 +350,11 @@ class MainVC: UIViewController {
             source = userLocation
         } else {
             return
+        }
+        DispatchQueue.main.async {
+            self.detailPanel.popChildViewController( completion: {
+                print("DID POP CHILDVIEWCONTROLLER")
+            })
         }
         getDirections(source: source, destination: destination)
     }

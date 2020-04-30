@@ -18,15 +18,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="city-map" translatesAutoresizingMaskIntoConstraints="NO" id="Oc0-xl-rdV">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SAPLogo.png" translatesAutoresizingMaskIntoConstraints="NO" id="jPg-87-njm">
+                                <rect key="frame" x="93.666666666666671" y="360.33333333333331" width="187.66666666666663" height="91.333333333333314"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="jPg-87-njm" secondAttribute="height" multiplier="72:35" id="d9m-Qe-8vW"/>
+                                </constraints>
                             </imageView>
                         </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="Oc0-xl-rdV" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="0Nd-IB-AMq"/>
-                            <constraint firstAttribute="bottom" secondItem="Oc0-xl-rdV" secondAttribute="bottom" id="87g-Yp-nDY"/>
-                            <constraint firstItem="Oc0-xl-rdV" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="cJU-sm-J0Q"/>
-                            <constraint firstAttribute="trailing" secondItem="Oc0-xl-rdV" secondAttribute="trailing" id="gOk-FL-WvD"/>
+                            <constraint firstItem="jPg-87-njm" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="MMm-R3-m0s"/>
+                            <constraint firstItem="jPg-87-njm" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="oqJ-UQ-N5v"/>
+                            <constraint firstItem="jPg-87-njm" firstAttribute="width" secondItem="Ze5-6b-2t3" secondAttribute="width" multiplier="0.5" id="z7D-c4-QTb"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -36,6 +39,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="city-map" width="320" height="320"/>
+        <image name="SAPLogo.png" width="72" height="35.520000457763672"/>
     </resources>
 </document>
