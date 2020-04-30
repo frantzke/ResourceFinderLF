@@ -204,50 +204,47 @@ class MainVC: UIViewController {
         let controller = SPPermissions.dialog([.locationWhenInUse])
         // Overide texts in controller
         //TODO: Better text
-        controller.titleText = "Title Text"
-        controller.headerText = "Header Text"
-        controller.footerText = "Footer Text"
-
-        // Set `DataSource` or `Delegate` if need.
-        // By default using project texts and icons.
+        controller.headerText = "Permissions"
+        controller.titleText = "Enable Location"
+        controller.footerText = "Location services will make it easier to find your nearest resources"
         controller.dataSource = self
-
-        // Always use this method for present
         controller.present(on: detailPanel.searchResults)
     }
     
-    private func askPermission() {
-        let msg = "Would you like to enable location services in Settings > Privacy > Location Services > Resource Finder"
-        let alertController = UIAlertController (title: "Location Services Disabled", message: msg, preferredStyle: .alert)
-        let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) -> Void in
-            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
-                return
-            }
-            if UIApplication.shared.canOpenURL(settingsUrl) {
-                UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
-                    print("Settings opened: \(success)") // Prints true
-                })
-            }
-        }
-        alertController.addAction(settingsAction)
-        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
-        alertController.addAction(cancelAction)
-        
-        detailPanel.searchResults.present(alertController, animated: true, completion: nil)
-    }
+//    private func askPermission() {
+//        let msg = "Would you like to enable location services in Settings > Privacy > Location Services > Resource Finder"
+//        let alertController = UIAlertController (title: "Location Services Disabled", message: msg, preferredStyle: .alert)
+//        let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) -> Void in
+//            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+//                return
+//            }
+//            if UIApplication.shared.canOpenURL(settingsUrl) {
+//                UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
+//                    print("Settings opened: \(success)") // Prints true
+//                })
+//            }
+//        }
+//        alertController.addAction(settingsAction)
+//        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+//        alertController.addAction(cancelAction)
+//
+//        detailPanel.searchResults.present(alertController, animated: true, completion: nil)
+//    }
     
     private func searchForAddreses(_ searchText: String) {
         let searchRequest = MKLocalSearch.Request()
         searchRequest.naturalLanguageQuery = searchText
         searchRequest.region = mapView.region
-        
+        SVProgressHUD.show()
         let search = MKLocalSearch(request: searchRequest)
         search.start { response, error in
             guard let response = response else {
+                //No MapItems found
                 print("Error: \(error?.localizedDescription ?? "Unknown error").")
+                SVProgressHUD.showInfo(withStatus: "No results found")
                 return
             }
-            
+            SVProgressHUD.dismiss()
             print("Found \(response.mapItems.count) results")
             self.searchResults = response.mapItems
             self.detailPanel.searchResults.tableView.reloadData()
@@ -263,10 +260,17 @@ class MainVC: UIViewController {
         request.transportType = .automobile
 
         let directions = MKDirections(request: request)
-
+        SVProgressHUD.show(withStatus: "Finding Directions")
         directions.calculate { [unowned self] response, error in
-            guard let unwrappedResponse = response else { return }
+            guard let unwrappedResponse = response else {
+                SVProgressHUD.showError(withStatus: "Couldn't find directions")
+                return
+            }
             self.clearMapOverlays()
+            
+            if unwrappedResponse.routes.count == 0 {
+                SVProgressHUD.showInfo(withStatus: "No directions found")
+            }
 
             for route in unwrappedResponse.routes {
                 self.mapView.addOverlay(route.polyline)
@@ -279,7 +283,11 @@ class MainVC: UIViewController {
                                            height: mapRect.height + adjustSize)
                 self.mapView.setVisibleMapRect(biggerRect, animated: true)
             }
+            SVProgressHUD.showSuccess(withStatus: "Directions Found!")
+            
             //TODO: Partially Dismiss Detail Panel
+            //self.detailPanel.searchResults.searchBar.endEditing(true)
+            //self.detailPanel.content.endAppearanceTransition()
             //self.mapView.selectAnnotation(MKPointAnnotation(coordinate: self.searchPin!.coordinate), animated: true)
         }
     }
@@ -292,7 +300,6 @@ class MainVC: UIViewController {
             centerMap(location: location, zoom: 0.01)
         } else {
             showPermissions()
-            //askPermission()
         }
     }
     
@@ -345,11 +352,19 @@ class MainVC: UIViewController {
     
     func didFetchSchoolPins(fetchedSchoolPins: [SchoolPin]?) {
         if let pins = fetchedSchoolPins {
+            if self.schoolPins.count > 0  {
+                self.mapView.removeAnnotations(self.schoolPins)
+            }
             self.schoolPins = pins
             self.mapView.showAnnotations(pins, animated: true)
-            SVProgressHUD.showSuccess(withStatus: "Found \(pins.count) resources!")
+            if pins.count == 0 {
+                SVProgressHUD.showInfo(withStatus: "No resources found")
+            } else {
+                SVProgressHUD.showSuccess(withStatus: "Found \(pins.count) resources!")
+            }
+        } else {
+            SVProgressHUD.showError(withStatus: "An error occurred")
         }
-        
     }
     
 }
