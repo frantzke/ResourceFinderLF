@@ -63,7 +63,6 @@ class SchoolOfferManager {
                         //If School already in SchoolPins: Append offer to existing SchoolPin and update SchoolPins
                         let schoolPin = schoolPins[index]
                         schoolPin.offers.append(schoolOffer.offer)
-                        schoolPin.subtitle = schoolPin.isAvailableToday ? "Available" : "Not Available"
                         schoolPins[index] = schoolPin
                     } else {
                         //If School not in School Pins: Create new schoolPin, append offer, and add to SchoolPins
@@ -72,7 +71,6 @@ class SchoolOfferManager {
                             school: schoolOffer.school,
                             coordinate: CLLocationCoordinate2D(latitude: schoolOffer.school.lat, longitude: schoolOffer.school.long))
                         schoolPin.offers.append(schoolOffer.offer)
-                        schoolPin.subtitle = schoolPin.isAvailableToday ? "Available" : "Not Available"
                         schoolPins.append(schoolPin)
                     }
                 } else {
@@ -112,14 +110,9 @@ class SchoolOfferManager {
         offer.fri = jSchoolOffer["AVAILABLEFRI"].bool
         offer.sat = jSchoolOffer["AVAILABLESAT"].bool
         offer.sun = jSchoolOffer["AVAILABLESUN"].bool
-//        offer.startDate =
-//        offer.endDate =
-        //offer.elegibilityCategory = jSchoolOffer["ELIGIBILITYCATEGORY"].string
         offer.description = jSchoolOffer["DESCRIPTION"].string
         offer.assistanceType = jSchoolOffer["ASSISTANCETYPE"].string
         offer.assistanceTypeDescription = jSchoolOffer["ASSISTANCETYPEDESCRIPTION"].string
-//        offer.pickup =
-//        offer.delivery =
         offer.offerDetails = jSchoolOffer["OFFERDETAILS"].string
         
         let school = School(

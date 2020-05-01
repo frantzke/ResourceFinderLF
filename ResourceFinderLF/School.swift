@@ -9,7 +9,7 @@
 import Foundation
 
 struct School: Hashable {
-    //Backend Properties
+    //MARK: Backend Properties
     var name: String
     var addressId: String
     var street: String?
@@ -31,7 +31,7 @@ struct School: Hashable {
     var elegibilityCategory: String?
     var startDate: String?
     var endDate: String?
-    //Calculated Properties
+    //MARK: Calculated Properties
     var address: String {
         return "\(street ?? ""), \(city ?? "") \(stateCode ?? "")"
     }

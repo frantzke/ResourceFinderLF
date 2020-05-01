@@ -12,13 +12,19 @@ import SAPFiori
 
 class SchoolPin: NSObject, MKAnnotation {
     let title: String?
-    var subtitle: String?
+    var subtitle: String? {
+        if isAvailableToday {
+            return "Available"
+        } else {
+            return "Not Available"
+        }
+    }
     let coordinate: CLLocationCoordinate2D
     let school: School
     var offers = [Offer]()
     var isAvailableToday: Bool {
         let availableOffers = offers.filter {
-            !$0.isAfterNow
+            !$0.isOfferExpired
         }
         return availableOffers.count > 0
     }
@@ -29,16 +35,11 @@ class SchoolPin: NSObject, MKAnnotation {
             return .preferredFioriColor(forStyle: .negative)
         }
     }
-
-    
     
     init(title: String?, school: School, coordinate: CLLocationCoordinate2D) {
         self.title = title
-        //subtitle = offerDetails?
         self.school = school
         self.coordinate = coordinate
         super.init()
     }
-    
-    
 }

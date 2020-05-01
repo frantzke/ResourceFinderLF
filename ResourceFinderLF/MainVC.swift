@@ -47,11 +47,6 @@ class MainVC: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         detailPanel.presentContainer()
-//        if let location = getUserLocation() {
-//            self.userLocation = location
-//            centerMap(location: location, zoom: 0.01)
-//            fetchSchoolOffers(location: location)
-//        } else
         if isNotDetermined {
             showPermissions()
         }
@@ -75,10 +70,6 @@ class MainVC: UIViewController {
         
         setupDetailPanel()
         
-        //Check if we are allowed to have the user's location
-            //Request Location
-            //locationManager?.requestWhenInUseAuthorization()
-        
         //Setup map toolbar
         let toolbar = FUIMapToolbar(mapView: mapView)
         let locationButton = FUIMapToolbar.UserLocationButton(mapView: self.mapView)
@@ -92,7 +83,6 @@ class MainVC: UIViewController {
         detailPanel = FUIMapDetailPanel(parentViewController: self, mapView: mapView)
         detailPanel.isApplyingBlurBackground = true
         // Setup Content
-        //detailPanel.content.tableView.isApp
         detailPanel.content.closeButton.didSelectHandler = { [unowned self] _ in
             self.dismissDetailPanel()
         }
@@ -118,11 +108,9 @@ class MainVC: UIViewController {
         override var annotation: MKAnnotation? {
             willSet {
                 if let schoolPin = newValue as? SchoolPin {
-                    //.preferredFioriColor(forStyle: .map1)
                     markerTintColor = schoolPin.markerTintColor
                     glyphImage = FUIIconLibrary.map.marker.cafe.withRenderingMode(.alwaysTemplate)
                 } else {
-                    //.preferredFioriColor(forStyle: .positive)
                     markerTintColor = UIColor.systemBlue
                     glyphImage = FUIIconLibrary.system.me.withRenderingMode(.alwaysTemplate)
                 }
@@ -165,12 +153,10 @@ class MainVC: UIViewController {
             Detail(title: "Who", subTitle: school.who, image: UIImage(systemName: "person.circle.fill")),
             Detail(title: "From", subTitle: school.datesInterval, image: UIImage(systemName: "clock.fill")),
         ]
-        //let foodIcon = FUIIconLibrary.map.marker.cafe.withRenderingMode(.automatic)
         let foodIcon = UIImage(named: "food-icon")
         let sortedOffers = offers.sorted(by: { $0.sortOrder < $1.sortOrder })
         for offer in sortedOffers {
             details.append(Detail(title: offer.when, subTitle: offer.time, image: foodIcon))
-            print(offer.isAfterNow)
         }
         if self.userLocation != nil || self.searchPin != nil {
             details.append(Detail(title: "Directions", subTitle: "", image: UIImage(systemName: "car.fill")))
@@ -211,33 +197,12 @@ class MainVC: UIViewController {
     private func showPermissions() {
         let controller = SPPermissions.dialog([.locationWhenInUse])
         // Overide texts in controller
-        //TODO: Better text
         controller.headerText = "Permissions"
         controller.titleText = "Enable Location"
         controller.footerText = "Location services will make it easier to find your nearest resources"
         controller.dataSource = self
         controller.present(on: detailPanel.searchResults)
     }
-    
-//    private func askPermission() {
-//        let msg = "Would you like to enable location services in Settings > Privacy > Location Services > Resource Finder"
-//        let alertController = UIAlertController (title: "Location Services Disabled", message: msg, preferredStyle: .alert)
-//        let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) -> Void in
-//            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
-//                return
-//            }
-//            if UIApplication.shared.canOpenURL(settingsUrl) {
-//                UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
-//                    print("Settings opened: \(success)") // Prints true
-//                })
-//            }
-//        }
-//        alertController.addAction(settingsAction)
-//        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
-//        alertController.addAction(cancelAction)
-//
-//        detailPanel.searchResults.present(alertController, animated: true, completion: nil)
-//    }
     
     private func searchForAddreses(_ searchText: String) {
         let searchRequest = MKLocalSearch.Request()
@@ -253,7 +218,6 @@ class MainVC: UIViewController {
                 return
             }
             SVProgressHUD.dismiss()
-            print("Found \(response.mapItems.count) results")
             self.searchResults = response.mapItems
             self.detailPanel.searchResults.tableView.reloadData()
         }
@@ -293,23 +257,19 @@ class MainVC: UIViewController {
             }
             SVProgressHUD.dismiss()
             
-            //TODO: Partially Dismiss Detail Panel
+            //Pop child controller back after a delay
+            //TODO: Come up with better soltion. -> Partially Dismiss Detail Panel
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 self.detailPanel.pushChildViewController(completion: {
                     print("DID PUSH CHILDVIEWCONTROLLER")
                 })
             }
-            //self.detailPanel.pushChildViewController()
-            //self.detailPanel.searchResults.searchBar.endEditing(true)
-            //self.detailPanel.content.endAppearanceTransition()
-            //self.mapView.selectAnnotation(MKPointAnnotation(coordinate: self.searchPin!.coordinate), animated: true)
         }
     }
     
     //MARK: Actions
     
     @objc private func onLocationButtonPresed(_ sender: UIButton) {
-        print("Location Toolbar Button Pressed")
         if let searchLocation = self.searchPin?.coordinate {
             centerMap(location: searchLocation, zoom: 0.01)
         } else if let location = getUserLocation() {
@@ -473,7 +433,6 @@ extension MainVC: MKMapViewDelegate, FUIMKMapViewDelegate {
 extension MainVC: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        print("Search button clicked")
         if let searchText = searchBar.searchTextField.text, searchText != "" {
             searchForAddreses(searchText)
         }

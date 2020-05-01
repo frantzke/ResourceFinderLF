@@ -9,7 +9,7 @@
 import Foundation
 
 class Offer {
-    //Backend Properties
+    //MARK: Backend Properties
     var id: String
     var from: String?
     var to: String?
@@ -27,7 +27,7 @@ class Offer {
     var assistanceType: String?
     var assistanceTypeDescription: String?
     var addressId: String
-    //Calculated Properties
+    //MARK: Calculated Properties
     var stringToTime: DateFormatter {
         let stringToTime = DateFormatter()
         stringToTime.dateStyle = .none
@@ -76,8 +76,7 @@ class Offer {
             return 4
         }
     }
-    var isAfterNow: Bool {
-        //TODO
+    var isOfferExpired: Bool {
         let today = Date()
         let df = DateFormatter()
         df.dateFormat = "HH:mm:ss"

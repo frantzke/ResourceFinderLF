@@ -52,7 +52,6 @@
 		D7185FB824571B1900C88974 /* School.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7185FB724571B1900C88974 /* School.swift */; };
 		D7185FBA24571D2700C88974 /* Offer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7185FB924571D2600C88974 /* Offer.swift */; };
 		D7185FBC245722C400C88974 /* SchoolPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7185FBB245722C400C88974 /* SchoolPin.swift */; };
-		D7A1099724532F73006E381F /* OfferPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A1099624532F73006E381F /* OfferPin.swift */; };
 		D7A33AAC2452070C00494AC9 /* SchoolOfferManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A33AAB2452070C00494AC9 /* SchoolOfferManager.swift */; };
 		D7A33AAF24520EA000494AC9 /* SchoolOffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A33AAE24520EA000494AC9 /* SchoolOffer.swift */; };
 		D7A33AB72452257700494AC9 /* ResourceFinderLFTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A33AB62452257700494AC9 /* ResourceFinderLFTests.swift */; };
@@ -145,7 +144,6 @@
 		D7185FB724571B1900C88974 /* School.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = School.swift; sourceTree = "<group>"; };
 		D7185FB924571D2600C88974 /* Offer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Offer.swift; sourceTree = "<group>"; };
 		D7185FBB245722C400C88974 /* SchoolPin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolPin.swift; sourceTree = "<group>"; };
-		D7A1099624532F73006E381F /* OfferPin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferPin.swift; sourceTree = "<group>"; };
 		D7A33AAB2452070C00494AC9 /* SchoolOfferManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolOfferManager.swift; sourceTree = "<group>"; };
 		D7A33AAE24520EA000494AC9 /* SchoolOffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolOffer.swift; sourceTree = "<group>"; };
 		D7A33AB42452257700494AC9 /* ResourceFinderLFTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ResourceFinderLFTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -350,7 +348,6 @@
 			isa = PBXGroup;
 			children = (
 				D7A33AAE24520EA000494AC9 /* SchoolOffer.swift */,
-				D7A1099624532F73006E381F /* OfferPin.swift */,
 				D7185FB724571B1900C88974 /* School.swift */,
 				D7185FB924571D2600C88974 /* Offer.swift */,
 				D7185FBB245722C400C88974 /* SchoolPin.swift */,
@@ -590,7 +587,6 @@
 			files = (
 				7A1315B91D4B982000A5DA56 /* AppDelegate.swift in Sources */,
 				6C4C108CA07BA852F63C4A54 /* AssistanceSubTypes.swift in Sources */,
-				D7A1099724532F73006E381F /* OfferPin.swift in Sources */,
 				A585375E708BAAD928856E9E /* AssistanceLocations.swift in Sources */,
 				BA95F137B77BCBB937A55068 /* EntityContainerMetadataText.swift in Sources */,
 				592B14283F22494D4B9AEA68 /* EntityContainerFactory.swift in Sources */,
