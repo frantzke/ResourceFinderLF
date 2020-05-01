@@ -73,9 +73,10 @@ class SchoolOfferManager {
                         schoolPin.offers.append(schoolOffer.offer)
                         schoolPins.append(schoolPin)
                     }
-                } else {
-                    print("End date after todays date")
                 }
+                //else {
+                //    print("End date after todays date")
+                //}
             }
             
             //TODO: Use Sets to improve runtime

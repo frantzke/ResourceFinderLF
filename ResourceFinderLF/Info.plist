@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>To find your nearest resources</string>
+	<string>Turn on location services to find your nearest resources</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Please permit using Face ID.</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
