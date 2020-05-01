@@ -17,6 +17,7 @@ struct Detail {
     var title: String
     var subTitle: String
     var image: UIImage?
+    var color: UIColor?
 }
 
 class MainVC: UIViewController {
@@ -69,14 +70,7 @@ class MainVC: UIViewController {
         locationManager?.delegate = self
         
         setupDetailPanel()
-        
-        //Setup map toolbar
-        let toolbar = FUIMapToolbar(mapView: mapView)
-        let locationButton = FUIMapToolbar.UserLocationButton(mapView: self.mapView)
-        locationButton.removeTarget(nil, action: nil, for: .allEvents)
-        locationButton.addTarget(self, action: #selector(onLocationButtonPresed), for: .touchUpInside)
-        let zoomExtentsButton = FUIMapToolbar.ZoomExtentButton(mapView: self.mapView)
-        toolbar.items = [locationButton, zoomExtentsButton]
+        setupToolbar()
     }
     
     private func setupDetailPanel() {
@@ -101,6 +95,23 @@ class MainVC: UIViewController {
         self.detailPanel.searchResults.tableView.estimatedRowHeight = 60
         self.detailPanel.searchResults.tableView.rowHeight = UITableView.automaticDimension
         self.detailPanel.searchResults.searchBar.delegate = self
+        self.detailPanel.searchResults.searchBar.placeholder = "Enter an address, locality, district..."
+    }
+    
+    private func setupToolbar() {
+        let toolbar = FUIMapToolbar(mapView: mapView)
+        let locationButton = FUIMapToolbar.UserLocationButton(mapView: self.mapView)
+        locationButton.removeTarget(nil, action: nil, for: .allEvents)
+        locationButton.addTarget(self, action: #selector(onLocationButtonPresed), for: .touchUpInside)
+        toolbar.items.append(locationButton)
+//        if UIDevice.current.userInterfaceIdiom == .pad {
+//            //If iPad show clear button
+//            let clearAllButton = FUIMapToolbar.ClearAllButton()
+//            clearAllButton.addTarget(self, action: #selector(onClearButtonPressed), for: .touchUpInside)
+//            toolbar.items.append(clearAllButton)
+//        }
+        let zoomExtentsButton = FUIMapToolbar.ZoomExtentButton(mapView: self.mapView)
+        toolbar.items.append(zoomExtentsButton)
     }
     
     //Customize map Annotation Markers
@@ -147,7 +158,6 @@ class MainVC: UIViewController {
     private func setDetailPanel(school: School, offers: [Offer]) {
         detailPanel.content.headlineText = school.name
         detailPanel.content.subheadlineText = school.address
-        
         var details = [
             Detail(title: "How", subTitle: school.how, image: UIImage(systemName: "questionmark.circle.fill")),
             Detail(title: "Who", subTitle: school.who, image: UIImage(systemName: "person.circle.fill")),
@@ -156,7 +166,12 @@ class MainVC: UIViewController {
         let foodIcon = UIImage(named: "food-icon")
         let sortedOffers = offers.sorted(by: { $0.sortOrder < $1.sortOrder })
         for offer in sortedOffers {
-            details.append(Detail(title: offer.when, subTitle: offer.time, image: foodIcon))
+            let detail = Detail(
+                    title: offer.when,
+                    subTitle: offer.time,
+                    image: foodIcon,
+                    color: offer.isOfferExpired ? .preferredFioriColor(forStyle: .negative) : .preferredFioriColor(forStyle: .positive))
+            details.append(detail)
         }
         if self.userLocation != nil || self.searchPin != nil {
             details.append(Detail(title: "Directions", subTitle: "", image: UIImage(systemName: "car.fill")))
@@ -269,6 +284,21 @@ class MainVC: UIViewController {
     
     //MARK: Actions
     
+//    @objc private func onClearButtonPressed(_ sender: UIButton) {
+//        for view in detailPanel.passThroughViews {
+//            if view.isHidden {
+//                view.setIsHidden(false, animated: true)
+//                //detailPanel.presentContainer()
+//                //self.view.addSubview(self.searchView!)
+//                //detailPanel.fitToContent()
+//            } else {
+//                //self.searchView = view
+//                view.setIsHidden(true, animated: true)
+//                //view.removeFromSuperview()
+//            }
+//        }
+//    }
+    
     @objc private func onLocationButtonPresed(_ sender: UIButton) {
         if let searchLocation = self.searchPin?.coordinate {
             centerMap(location: searchLocation, zoom: 0.01)
@@ -356,6 +386,9 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
         cell.headlineText = detail.title
         cell.subheadlineText = detail.subTitle
         cell.tintColor = .preferredFioriColor(forStyle: .map1)
+        if let color = detail.color {
+            cell.subheadlineLabel.textColor = color
+        }
         cell.detailImage = detail.image
         cell.isUserInteractionEnabled = false
         return cell
@@ -463,3 +496,20 @@ extension MainVC: SPPermissionsDataSource {
         return cell
     }
 }
+//extension UIView {
+//    func setIsHidden(_ hidden: Bool, animated: Bool) {
+//        if animated {
+//            if self.isHidden && !hidden {
+//                self.alpha = 0.0
+//                self.isHidden = false
+//            }
+//            UIView.animate(withDuration: 0.25, animations: {
+//                self.alpha = hidden ? 0.0 : 1.0
+//            }) { (complete) in
+//                self.isHidden = hidden
+//            }
+//        } else {
+//            self.isHidden = hidden
+//        }
+//    }
+//}

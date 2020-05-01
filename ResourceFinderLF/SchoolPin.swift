@@ -14,9 +14,9 @@ class SchoolPin: NSObject, MKAnnotation {
     let title: String?
     var subtitle: String? {
         if isAvailableToday {
-            return "Available"
+            return "Available Today"
         } else {
-            return "Not Available"
+            return "Not Available Today"
         }
     }
     let coordinate: CLLocationCoordinate2D
