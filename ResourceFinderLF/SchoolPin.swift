@@ -8,6 +8,7 @@
 
 import Foundation
 import MapKit
+import SAPFiori
 
 class SchoolPin: NSObject, MKAnnotation {
     let title: String?
@@ -15,6 +16,20 @@ class SchoolPin: NSObject, MKAnnotation {
     let coordinate: CLLocationCoordinate2D
     let school: School
     var offers = [Offer]()
+    var isAvailableToday: Bool {
+        let availableOffers = offers.filter {
+            !$0.isAfterNow
+        }
+        return availableOffers.count > 0
+    }
+    var markerTintColor: UIColor {
+        if isAvailableToday {
+            return .preferredFioriColor(forStyle: .positive)
+        } else {
+            return .preferredFioriColor(forStyle: .negative)
+        }
+    }
+
     
     
     init(title: String?, school: School, coordinate: CLLocationCoordinate2D) {

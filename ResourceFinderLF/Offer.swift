@@ -76,6 +76,17 @@ class Offer {
             return 4
         }
     }
+    var isAfterNow: Bool {
+        //TODO
+        let today = Date()
+        let df = DateFormatter()
+        df.dateFormat = "HH:mm:ss"
+        let todayStr = df.string(from: today)
+        if let toStr = self.to {
+            return toStr < todayStr
+        }
+        return false
+    }
     
     init(id: String, addressId: String, type: String) {
         self.id = id

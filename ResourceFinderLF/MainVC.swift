@@ -117,11 +117,13 @@ class MainVC: UIViewController {
     private class FioriMarker: FUIMarkerAnnotationView {
         override var annotation: MKAnnotation? {
             willSet {
-                if newValue as? SchoolPin != nil {
-                    markerTintColor = .preferredFioriColor(forStyle: .map1)
+                if let schoolPin = newValue as? SchoolPin {
+                    //.preferredFioriColor(forStyle: .map1)
+                    markerTintColor = schoolPin.markerTintColor
                     glyphImage = FUIIconLibrary.map.marker.cafe.withRenderingMode(.alwaysTemplate)
                 } else {
-                    markerTintColor = .preferredFioriColor(forStyle: .positive)
+                    //.preferredFioriColor(forStyle: .positive)
+                    markerTintColor = UIColor.systemBlue
                     glyphImage = FUIIconLibrary.system.me.withRenderingMode(.alwaysTemplate)
                 }
                 displayPriority = .required
@@ -168,6 +170,7 @@ class MainVC: UIViewController {
         let sortedOffers = offers.sorted(by: { $0.sortOrder < $1.sortOrder })
         for offer in sortedOffers {
             details.append(Detail(title: offer.when, subTitle: offer.time, image: foodIcon))
+            print(offer.isAfterNow)
         }
         if self.userLocation != nil || self.searchPin != nil {
             details.append(Detail(title: "Directions", subTitle: "", image: UIImage(systemName: "car.fill")))
@@ -307,7 +310,9 @@ class MainVC: UIViewController {
     
     @objc private func onLocationButtonPresed(_ sender: UIButton) {
         print("Location Toolbar Button Pressed")
-        if let location = getUserLocation() {
+        if let searchLocation = self.searchPin?.coordinate {
+            centerMap(location: searchLocation, zoom: 0.01)
+        } else if let location = getUserLocation() {
             centerMap(location: location, zoom: 0.01)
         } else {
             showPermissions()
