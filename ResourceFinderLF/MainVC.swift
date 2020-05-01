@@ -27,7 +27,7 @@ class MainVC: UIViewController {
     
     var locationManager: CLLocationManager?
     var userLocation: CLLocationCoordinate2D?
-    var selectedLocation: CLLocationCoordinate2D?
+    var selectedLocation: MKAnnotation?
     var detailPanel: FUIMapDetailPanel!
     
     var details = [Detail]()
@@ -173,9 +173,8 @@ class MainVC: UIViewController {
                     color: offer.isOfferExpired ? .preferredFioriColor(forStyle: .negative) : .preferredFioriColor(forStyle: .positive))
             details.append(detail)
         }
-        if self.userLocation != nil || self.searchPin != nil {
-            details.append(Detail(title: "Directions", subTitle: "", image: UIImage(systemName: "car.fill")))
-        }
+        details.append(Detail(title: "Fastest Route", subTitle: ""))
+        details.append(Detail(title: "Navigate", subTitle: ""))
         self.details = details
         
         detailPanel.content.tableView.reloadData()
@@ -338,6 +337,7 @@ class MainVC: UIViewController {
             print("ERROR: No destination given")
             return
         }
+        
         let source: CLLocationCoordinate2D
         if let searchLocation = self.searchPin?.coordinate {
             source = searchLocation
@@ -351,7 +351,28 @@ class MainVC: UIViewController {
                 print("DID POP CHILDVIEWCONTROLLER")
             })
         }
-        getDirections(source: source, destination: destination)
+        getDirections(source: source, destination: destination.coordinate)
+    }
+    
+    @objc private func onNavigateButton(_ sender: UIButton) {
+        guard let destination = self.selectedLocation else {
+            print("ERROR: No destination given")
+            return
+        }
+        let launchOptions = [
+          MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
+        ]
+        
+        let destinationItem = MKMapItem(placemark: MKPlacemark(coordinate: destination.coordinate))
+        destinationItem.name = destination.title ?? ""
+        
+        if let searchLocation = self.searchPin {
+            let sourceItem = MKMapItem(placemark: MKPlacemark(coordinate: searchLocation.coordinate))
+            sourceItem.name = searchLocation.title
+            MKMapItem.openMaps(with: [sourceItem, destinationItem], launchOptions: launchOptions)
+        } else {
+            destinationItem.openInMaps(launchOptions: launchOptions)
+        }
     }
     
     //MARK: Backend Calls
@@ -404,6 +425,21 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
+    private func setDirectionsCell(cell: FUIMapDetailPanel.ButtonTableViewCell) -> FUIMapDetailPanel.ButtonTableViewCell {
+        cell.buttonHeadlineText = "Fastest Route"
+        cell.button.backgroundColor = UIColor.preferredFioriColor(forStyle: .map1)
+        cell.button.addTarget(self, action: #selector(onDirectionsButton), for: .touchUpInside)
+        return cell
+    }
+    
+    private func setNavigateCell(cell: FUIMapDetailPanel.ButtonTableViewCell) -> FUIMapDetailPanel.ButtonTableViewCell {
+        cell.buttonHeadlineText = "Navigate"
+        cell.button.backgroundColor = UIColor.preferredFioriColor(forStyle: .map1)
+        cell.button.addTarget(self, action: #selector(onNavigateButton), for: .touchUpInside)
+        cell.button.tintColor = UIColor.preferredFioriColor(forStyle: .map1)
+        return cell
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableView == self.detailPanel.searchResults.tableView {
             return searchResults.count
@@ -415,12 +451,12 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if tableView == self.detailPanel.content.tableView {
             let detail = details[indexPath.row]
-            if detail.title == "Directions" {
+            if detail.title == "Fastest Route" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: FUIMapDetailPanel.ButtonTableViewCell.reuseIdentifier, for: indexPath) as! FUIMapDetailPanel.ButtonTableViewCell
-                cell.buttonHeadlineText = "Directions"
-                cell.button.backgroundColor = UIColor.preferredFioriColor(forStyle: .map1)
-                cell.button.addTarget(self, action: #selector(onDirectionsButton), for: .touchUpInside)
-                return cell
+                return setDirectionsCell(cell: cell)
+            } else if detail.title == "Navigate" {
+                let cell = tableView.dequeueReusableCell(withIdentifier: FUIMapDetailPanel.ButtonTableViewCell.reuseIdentifier, for: indexPath) as! FUIMapDetailPanel.ButtonTableViewCell
+                return setNavigateCell(cell: cell)
             }
             let detailCell = tableView.dequeueReusableCell(withIdentifier: FUIObjectTableViewCell.reuseIdentifier, for: indexPath) as! FUIObjectTableViewCell
             return setContentCell(cell: detailCell, detail: detail)
@@ -450,7 +486,7 @@ extension MainVC: MKMapViewDelegate, FUIMKMapViewDelegate {
             centerMap(location: annotation.coordinate, zoom: 0.01)
             setAddressPanel(annotation)
         }
-        selectedLocation = view.annotation?.coordinate
+        selectedLocation = view.annotation
         DispatchQueue.main.async {
             self.detailPanel.pushChildViewController()
         }
