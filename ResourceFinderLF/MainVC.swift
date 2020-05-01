@@ -99,7 +99,7 @@ class MainVC: UIViewController {
         self.detailPanel.searchResults.tableView.estimatedRowHeight = 60
         self.detailPanel.searchResults.tableView.rowHeight = UITableView.automaticDimension
         self.detailPanel.searchResults.searchBar.delegate = self
-        self.detailPanel.searchResults.searchBar.placeholder = "Enter an address, locality, district..."
+        self.detailPanel.searchResults.searchBar.placeholder = "Search for a place or address"
     }
     
     private func setupToolbar() {
@@ -177,7 +177,7 @@ class MainVC: UIViewController {
                     color: offer.isOfferExpired ? .preferredFioriColor(forStyle: .negative) : .preferredFioriColor(forStyle: .positive))
             details.append(detail)
         }
-        details.append(Detail(title: "Fastest Route", subTitle: ""))
+        //details.append(Detail(title: "Fastest Route", subTitle: ""))
         details.append(Detail(title: "Navigate", subTitle: ""))
         self.details = details
         
