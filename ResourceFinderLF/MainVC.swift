@@ -36,6 +36,10 @@ class MainVC: UIViewController {
     var searchPin: MKPointAnnotation?
     var isNotDetermined = false
     
+    var searchIsDisplayed = true
+    var searchViewFrame: CGRect?
+    var searchView: UIView?
+    
     //MARK: Initialization
     
     override func viewDidLoad() {
@@ -273,7 +277,7 @@ class MainVC: UIViewController {
             
             //Pop child controller back after a delay
             //TODO: Come up with better soltion. -> Partially Dismiss Detail Panel
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 self.detailPanel.pushChildViewController(completion: {
                     print("DID PUSH CHILDVIEWCONTROLLER")
                 })
@@ -285,15 +289,34 @@ class MainVC: UIViewController {
     
 //    @objc private func onClearButtonPressed(_ sender: UIButton) {
 //        for view in detailPanel.passThroughViews {
-//            if view.isHidden {
-//                view.setIsHidden(false, animated: true)
-//                //detailPanel.presentContainer()
-//                //self.view.addSubview(self.searchView!)
-//                //detailPanel.fitToContent()
+//            if searchIsDisplayed {
+//                searchIsDisplayed = false
+//                searchView = view
+//                searchViewFrame = view.frame
+//                let orginalTransform = view.transform
+//                let distance = view.frame.width + view.frame.origin.x
+//                let translatedTransform = orginalTransform.translatedBy(x: -distance, y: 0.0)
+//                let options: UIView.AnimationOptions = [.curveEaseOut]
+//                UIView.animate(withDuration: 0.5, delay: 0.0, options: options, animations: {
+//                    view.transform = translatedTransform
+//                }, completion: { completed in
+//                    view.removeFromSuperview()
+//                })
 //            } else {
-//                //self.searchView = view
-//                view.setIsHidden(true, animated: true)
-//                //view.removeFromSuperview()
+//                let addView = searchView!
+//                self.view.addSubview(addView)
+//                addView.frame = searchViewFrame!
+//                let orginalTransform = addView.transform
+//                let distance = addView.frame.width + addView.frame.origin.x
+//                let translatedTransform = orginalTransform.translatedBy(x: distance, y: 0.0)
+//                let options: UIView.AnimationOptions = [.curveEaseOut]
+//                UIView.animate(withDuration: 0.5, delay: 0.0, options: options, animations: {
+//                    view.transform = translatedTransform
+//                }, completion: { completed in
+//                    view.frame = self.searchViewFrame!
+//                    self.view.addSubview(view)
+//                    print("added back?")
+//                })
 //            }
 //        }
 //    }
@@ -517,6 +540,15 @@ extension MainVC: CLLocationManagerDelegate {
                 self.userLocation = userLocation
                 centerMap(location: userLocation, zoom: 0.01)
                 fetchSchoolOffers(location: userLocation)
+            } else {
+                //Try again in 2 seconds
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    if let userLocation = self.getUserLocation() {
+                        self.userLocation = userLocation
+                        self.centerMap(location: userLocation, zoom: 0.01)
+                        self.fetchSchoolOffers(location: userLocation)
+                    }
+                }
             }
         case .notDetermined:
             isNotDetermined = true
