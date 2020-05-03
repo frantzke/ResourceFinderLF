@@ -13,7 +13,7 @@ import SAPFiori
 class SchoolPin: NSObject, MKAnnotation {
     let title: String?
     var subtitle: String? {
-        if isAvailableToday {
+        if isOfferAvailableToday {
             return "Available Today"
         } else {
             return "Not Available Today"
@@ -22,14 +22,14 @@ class SchoolPin: NSObject, MKAnnotation {
     let coordinate: CLLocationCoordinate2D
     let school: School
     var offers = [Offer]()
-    var isAvailableToday: Bool {
+    var isOfferAvailableToday: Bool {
         let availableOffers = offers.filter {
-            !$0.isOfferExpired
+            $0.isAvailableToday
         }
         return availableOffers.count > 0
     }
     var markerTintColor: UIColor {
-        if isAvailableToday {
+        if isOfferAvailableToday {
             return .preferredFioriColor(forStyle: .positive)
         } else {
             return .preferredFioriColor(forStyle: .negative)

@@ -15,7 +15,7 @@ import SPPermissions
 
 struct Detail {
     var title: String
-    var subTitle: String
+    var subTitle: String?
     var image: UIImage?
     var color: UIColor?
 }
@@ -130,15 +130,13 @@ class MainVC: FUIMKMapFloorplanViewController {
         let zoomExtentsButton = FUIMapToolbar.ZoomExtentButton(mapView: self.mapView)
         toolbarItems.append(zoomExtentsButton)
         
-        
-        //Show legend button
-        toolbarItems.append(toolbar.items[3])
-        
         if UIDevice.current.userInterfaceIdiom == .pad {
             //If iPad show hide button
             //Get hide button
             let hideButton = toolbar.items[2]
             toolbarItems.append(hideButton)
+            //Show legend button
+            toolbarItems.append(toolbar.items[3])
         }
         
         toolbar.items = toolbarItems
@@ -185,27 +183,34 @@ class MainVC: FUIMKMapFloorplanViewController {
         self.detailPanel.popChildViewController()
     }
     
-    private func setDetailPanel(school: School, offers: [Offer]) {
-        detailPanel.content.headlineText = school.name
-        detailPanel.content.subheadlineText = school.address
-        var details = [
-            Detail(title: "How", subTitle: school.how, image: UIImage(systemName: "questionmark.circle.fill")),
-            Detail(title: "Who", subTitle: school.who, image: UIImage(systemName: "person.circle.fill")),
-            Detail(title: "From", subTitle: school.datesInterval, image: UIImage(systemName: "clock.fill")),
-        ]
+    private func setDetailPanel(schoolPin: SchoolPin) {
+        detailPanel.content.headlineText = schoolPin.school.name
+        detailPanel.content.subheadlineText = schoolPin.school.address
+        var panelDetails = [Detail]()
+        if schoolPin.isOfferAvailableToday {
+            panelDetails.append(Detail(title: "Available Today", color: .preferredFioriColor(forStyle: .positive)))
+        } else {
+            panelDetails.append(Detail(title: "Not Available Today", color: .preferredFioriColor(forStyle: .negative)))
+        }
+        panelDetails.append(contentsOf: [
+            Detail(title: "How", subTitle: schoolPin.school.how, image: UIImage(systemName: "questionmark.circle.fill")),
+            Detail(title: "Who", subTitle: schoolPin.school.who, image: UIImage(systemName: "person.circle.fill")),
+            Detail(title: "From", subTitle: schoolPin.school.datesInterval, image: UIImage(systemName: "clock.fill")),
+        ])
+        //var details =
         let foodIcon = UIImage(named: "food-icon")
-        let sortedOffers = offers.sorted(by: { $0.sortOrder < $1.sortOrder })
+        let sortedOffers = schoolPin.offers.sorted(by: { $0.sortOrder < $1.sortOrder })
         for offer in sortedOffers {
             let detail = Detail(
                     title: offer.when,
                     subTitle: offer.time,
-                    image: foodIcon,
-                    color: offer.isOfferExpired ? .preferredFioriColor(forStyle: .negative) : .preferredFioriColor(forStyle: .positive))
-            details.append(detail)
+                    image: foodIcon)
+            //color: offer.isAvailableToday ? .preferredFioriColor(forStyle: .positive) : .preferredFioriColor(forStyle: .negative)
+            panelDetails.append(detail)
         }
         //details.append(Detail(title: "Fastest Route", subTitle: ""))
-        details.append(Detail(title: "Directions", subTitle: ""))
-        self.details = details
+        panelDetails.append(Detail(title: "Directions", subTitle: ""))
+        self.details = panelDetails
         
         detailPanel.content.tableView.reloadData()
     }
@@ -457,7 +462,14 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
         cell.subheadlineText = detail.subTitle
         cell.tintColor = .preferredFioriColor(forStyle: .map1)
         if let color = detail.color {
-            cell.subheadlineLabel.textColor = color
+            //let myMutableString = NSMutableAttributedString(string: detail.title)
+            //let openIndex = detail.title.firstIndex(of: "(")
+            //let colorLength = detail.title.count - openIndex.hashValue - 1
+            //let range = NSRange(location: openIndex.hashValue, length: colorLength)
+            //myMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: color, range: range)
+            //cell.headlineLabel.attributedText = myMutableString
+            cell.headlineLabel.textColor = color
+            //cell.subheadlineLabel.textColor = color
         }
         cell.detailImage = detail.image
         cell.isUserInteractionEnabled = false
@@ -530,7 +542,7 @@ extension MainVC: MKMapViewDelegate, FUIMKMapViewDelegate {
         if let pin = view.annotation as? SchoolPin {
             clearMapOverlays()
             centerMap(location: pin.coordinate, zoom: 0.01)
-            setDetailPanel(school: pin.school, offers: pin.offers)
+            setDetailPanel(schoolPin: pin)
         } else if let annotation = view.annotation {
             centerMap(location: annotation.coordinate, zoom: 0.01)
             setAddressPanel(annotation)

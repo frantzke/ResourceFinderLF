@@ -76,16 +76,33 @@ class Offer {
             return 4
         }
     }
-    var isOfferExpired: Bool {
-        let today = Date()
-        let df = DateFormatter()
-        df.dateFormat = "HH:mm:ss"
-        let todayStr = df.string(from: today)
-        if let toStr = self.to {
-            return toStr < todayStr
+    var weekAvailablility: [Bool?] {
+        return [sun, mon, tue, wed, thu, fri, sat]
+    }
+    var isAvailableToday: Bool {
+        let calendar = Calendar.current
+        let componentsSet: Set<Calendar.Component> = [ .weekday ]
+        let now = Date()
+        let nowComp = calendar.dateComponents(componentsSet, from: now)
+        //weekday: Sun = 1, Mon = 2, ..., Sat = 7
+        if let weekDay = nowComp.weekday,
+            let availableWeekDay = weekAvailablility[weekDay - 1],
+            availableWeekDay == true {
+            let df = DateFormatter()
+            df.dateFormat = "HH:mm:ss"
+            let nowStr = df.string(from: now)
+            if let toStr = self.to {
+                let res = nowStr < toStr 
+                return res
+            }
         }
         return false
     }
+//    var isOfferExpired: Bool {
+//        let today = Date()
+//        
+//        return false
+//    }
     
     init(id: String, addressId: String, type: String) {
         self.id = id
