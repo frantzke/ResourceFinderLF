@@ -20,15 +20,15 @@ struct Detail {
     var color: UIColor?
 }
 
-class MainVC: UIViewController {
+class MainVC: FUIMKMapFloorplanViewController {
     
     //MARK: Properties
-    @IBOutlet weak var mapView: MKMapView!
+    //@IBOutlet weak var mapView: MKMapView!
     
     var locationManager: CLLocationManager?
     var userLocation: CLLocationCoordinate2D?
     var selectedLocation: MKAnnotation?
-    var detailPanel: FUIMapDetailPanel!
+    //var detailPanel: FUIMapDetailPanel!
     
     var details = [Detail]()
     var schoolPins = [SchoolPin]()
@@ -51,17 +51,17 @@ class MainVC: UIViewController {
     // Ensures that the detail panel is present whenever the map view appears.
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        detailPanel.presentContainer()
+        //detailPanel.presentContainer()
         if isNotDetermined {
             showPermissions()
         }
     }
 
     // Dismisses the detail panel whenever the map view disappears.
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        presentedViewController?.dismiss(animated: false, completion: nil)
-    }
+//    override func viewWillDisappear(_ animated: Bool) {
+//        super.viewWillDisappear(animated)
+//        //presentedViewController?.dismiss(animated: false, completion: nil)
+//    }
     
     private func setupView() {
         mapView.delegate = self
@@ -75,10 +75,27 @@ class MainVC: UIViewController {
         
         setupDetailPanel()
         setupToolbar()
+        
+        //setupLegend
+        //var legendItems = [FUIMapLegendItem]()
+        var availableItem = FUIMapLegendItem(title: "Available Today")
+        availableItem.backgroundColor = .preferredFioriColor(forStyle: .positive)
+//        let itemImage = FUIAttributedImage(image: FUIIconLibrary.map.marker.cafe.withRenderingMode(.alwaysTemplate))
+//        itemImage.tintColor = .preferredFioriColor(forStyle: .tintColorLight)
+        availableItem.icon = FUIMapLegendIcon(glyphImage: "")
+        
+        var closedItem = FUIMapLegendItem(title: "Not Available Today")
+        closedItem.backgroundColor = .preferredFioriColor(forStyle: .negative)
+        closedItem.icon = FUIMapLegendIcon(glyphImage: "")
+
+        let legendTextView = UITextView()
+        legendTextView.text = "Legend"
+        legend.headerTextView.text = "Legend"
+        legend.items = [availableItem, closedItem]
     }
     
     private func setupDetailPanel() {
-        detailPanel = FUIMapDetailPanel(parentViewController: self, mapView: mapView)
+        //detailPanel = FUIMapDetailPanel(parentViewController: self, mapView: mapView)
         detailPanel.isApplyingBlurBackground = true
         // Setup Content
         detailPanel.content.closeButton.didSelectHandler = { [unowned self] _ in
@@ -103,19 +120,28 @@ class MainVC: UIViewController {
     }
     
     private func setupToolbar() {
-        let toolbar = FUIMapToolbar(mapView: mapView)
+        var toolbarItems = [FUIMapToolbarButton]()
+        //Custom User Location button
         let locationButton = FUIMapToolbar.UserLocationButton(mapView: self.mapView)
         locationButton.removeTarget(nil, action: nil, for: .allEvents)
         locationButton.addTarget(self, action: #selector(onLocationButtonPresed), for: .touchUpInside)
-        toolbar.items.append(locationButton)
-//        if UIDevice.current.userInterfaceIdiom == .pad {
-//            //If iPad show clear button
-//            let clearAllButton = FUIMapToolbar.ClearAllButton()
-//            clearAllButton.addTarget(self, action: #selector(onClearButtonPressed), for: .touchUpInside)
-//            toolbar.items.append(clearAllButton)
-//        }
+        toolbarItems.append(locationButton)
+
         let zoomExtentsButton = FUIMapToolbar.ZoomExtentButton(mapView: self.mapView)
-        toolbar.items.append(zoomExtentsButton)
+        toolbarItems.append(zoomExtentsButton)
+        
+        
+        //Show legend button
+        toolbarItems.append(toolbar.items[3])
+        
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            //If iPad show hide button
+            //Get hide button
+            let hideButton = toolbar.items[2]
+            toolbarItems.append(hideButton)
+        }
+        
+        toolbar.items = toolbarItems
     }
     
     //Customize map Annotation Markers
@@ -178,7 +204,7 @@ class MainVC: UIViewController {
             details.append(detail)
         }
         //details.append(Detail(title: "Fastest Route", subTitle: ""))
-        details.append(Detail(title: "Navigate", subTitle: ""))
+        details.append(Detail(title: "Directions", subTitle: ""))
         self.details = details
         
         detailPanel.content.tableView.reloadData()
@@ -190,7 +216,7 @@ class MainVC: UIViewController {
             detailPanel.content.subheadlineText = title
             self.details = [
                 Detail(title: subtitle ?? "Here",
-                       subTitle: "Searching for resources near here",
+                       subTitle: "Showing resources near here",
                        image: UIImage(systemName: "questionmark.circle.fill"))
             ]
         } else {
@@ -456,7 +482,7 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     private func setNavigateCell(cell: FUIMapDetailPanel.ButtonTableViewCell) -> FUIMapDetailPanel.ButtonTableViewCell {
-        cell.buttonHeadlineText = "Navigate"
+        cell.buttonHeadlineText = "Directions"
         cell.button.backgroundColor = UIColor.preferredFioriColor(forStyle: .map1)
         cell.button.addTarget(self, action: #selector(onNavigateButton), for: .touchUpInside)
         cell.button.tintColor = UIColor.preferredFioriColor(forStyle: .map1)
@@ -477,7 +503,7 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
             if detail.title == "Fastest Route" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: FUIMapDetailPanel.ButtonTableViewCell.reuseIdentifier, for: indexPath) as! FUIMapDetailPanel.ButtonTableViewCell
                 return setDirectionsCell(cell: cell)
-            } else if detail.title == "Navigate" {
+            } else if detail.title == "Directions" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: FUIMapDetailPanel.ButtonTableViewCell.reuseIdentifier, for: indexPath) as! FUIMapDetailPanel.ButtonTableViewCell
                 return setNavigateCell(cell: cell)
             }

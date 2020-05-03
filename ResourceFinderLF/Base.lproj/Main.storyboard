@@ -9,7 +9,7 @@
         <!--MainVC-->
         <scene sceneID="EHf-IW-A2E">
             <objects>
-                <viewController storyboardIdentifier="MainViewController" id="01J-lp-oVM" customClass="MainVC" customModule="ResourceFinderLF" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MainViewController" id="01J-lp-oVM" customClass="MainVC" customModule="SAP4Kids__Resource_Finder" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Llm-lL-Icb"/>
                         <viewControllerLayoutGuide type="bottom" id="xb3-aO-Qok"/>
@@ -17,22 +17,8 @@
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="hh2-cp-ycc">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
-                            </mapView>
-                        </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <constraints>
-                            <constraint firstItem="hh2-cp-ycc" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="1Iu-H3-5s0"/>
-                            <constraint firstItem="hh2-cp-ycc" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="aqd-Wv-4Jq"/>
-                            <constraint firstAttribute="trailing" secondItem="hh2-cp-ycc" secondAttribute="trailing" id="nit-cH-K4U"/>
-                            <constraint firstAttribute="bottom" secondItem="hh2-cp-ycc" secondAttribute="bottom" id="wy3-gv-GHX"/>
-                        </constraints>
                     </view>
-                    <connections>
-                        <outlet property="mapView" destination="hh2-cp-ycc" id="heG-ge-Gqb"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
