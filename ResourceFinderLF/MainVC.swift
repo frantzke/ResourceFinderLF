@@ -23,12 +23,10 @@ struct Detail {
 class MainVC: FUIMKMapFloorplanViewController {
     
     //MARK: Properties
-    //@IBOutlet weak var mapView: MKMapView!
     
     var locationManager: CLLocationManager?
     var userLocation: CLLocationCoordinate2D?
     var selectedLocation: MKAnnotation?
-    //var detailPanel: FUIMapDetailPanel!
     
     var details = [Detail]()
     var schoolPins = [SchoolPin]()
@@ -51,17 +49,10 @@ class MainVC: FUIMKMapFloorplanViewController {
     // Ensures that the detail panel is present whenever the map view appears.
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        //detailPanel.presentContainer()
         if isNotDetermined {
             showPermissions()
         }
     }
-
-    // Dismisses the detail panel whenever the map view disappears.
-//    override func viewWillDisappear(_ animated: Bool) {
-//        super.viewWillDisappear(animated)
-//        //presentedViewController?.dismiss(animated: false, completion: nil)
-//    }
     
     private func setupView() {
         mapView.delegate = self
@@ -76,26 +67,18 @@ class MainVC: FUIMKMapFloorplanViewController {
         setupDetailPanel()
         setupToolbar()
         
-        //setupLegend
-        //var legendItems = [FUIMapLegendItem]()
+        //Setup Legend
         var availableItem = FUIMapLegendItem(title: "Available Today")
         availableItem.backgroundColor = .preferredFioriColor(forStyle: .positive)
-//        let itemImage = FUIAttributedImage(image: FUIIconLibrary.map.marker.cafe.withRenderingMode(.alwaysTemplate))
-//        itemImage.tintColor = .preferredFioriColor(forStyle: .tintColorLight)
         availableItem.icon = FUIMapLegendIcon(glyphImage: "")
-        
         var closedItem = FUIMapLegendItem(title: "Not Available Today")
         closedItem.backgroundColor = .preferredFioriColor(forStyle: .negative)
         closedItem.icon = FUIMapLegendIcon(glyphImage: "")
-
-        let legendTextView = UITextView()
-        legendTextView.text = "Legend"
         legend.headerTextView.text = "Legend"
         legend.items = [availableItem, closedItem]
     }
     
     private func setupDetailPanel() {
-        //detailPanel = FUIMapDetailPanel(parentViewController: self, mapView: mapView)
         detailPanel.isApplyingBlurBackground = true
         // Setup Content
         detailPanel.content.closeButton.didSelectHandler = { [unowned self] _ in
@@ -131,11 +114,8 @@ class MainVC: FUIMKMapFloorplanViewController {
         toolbarItems.append(zoomExtentsButton)
         
         if UIDevice.current.userInterfaceIdiom == .pad {
-            //If iPad show hide button
-            //Get hide button
-            let hideButton = toolbar.items[2]
-            toolbarItems.append(hideButton)
-            //Show legend button
+            //Add hide and legend button if an iPad
+            toolbarItems.append(toolbar.items[2])
             toolbarItems.append(toolbar.items[3])
         }
         
@@ -197,7 +177,6 @@ class MainVC: FUIMKMapFloorplanViewController {
             Detail(title: "Who", subTitle: schoolPin.school.who, image: UIImage(systemName: "person.circle.fill")),
             Detail(title: "From", subTitle: schoolPin.school.datesInterval, image: UIImage(systemName: "clock.fill")),
         ])
-        //var details =
         let foodIcon = UIImage(named: "food-icon")
         let sortedOffers = schoolPin.offers.sorted(by: { $0.sortOrder < $1.sortOrder })
         for offer in sortedOffers {
@@ -318,40 +297,6 @@ class MainVC: FUIMKMapFloorplanViewController {
     
     //MARK: Actions
     
-//    @objc private func onClearButtonPressed(_ sender: UIButton) {
-//        for view in detailPanel.passThroughViews {
-//            if searchIsDisplayed {
-//                searchIsDisplayed = false
-//                searchView = view
-//                searchViewFrame = view.frame
-//                let orginalTransform = view.transform
-//                let distance = view.frame.width + view.frame.origin.x
-//                let translatedTransform = orginalTransform.translatedBy(x: -distance, y: 0.0)
-//                let options: UIView.AnimationOptions = [.curveEaseOut]
-//                UIView.animate(withDuration: 0.5, delay: 0.0, options: options, animations: {
-//                    view.transform = translatedTransform
-//                }, completion: { completed in
-//                    view.removeFromSuperview()
-//                })
-//            } else {
-//                let addView = searchView!
-//                self.view.addSubview(addView)
-//                addView.frame = searchViewFrame!
-//                let orginalTransform = addView.transform
-//                let distance = addView.frame.width + addView.frame.origin.x
-//                let translatedTransform = orginalTransform.translatedBy(x: distance, y: 0.0)
-//                let options: UIView.AnimationOptions = [.curveEaseOut]
-//                UIView.animate(withDuration: 0.5, delay: 0.0, options: options, animations: {
-//                    view.transform = translatedTransform
-//                }, completion: { completed in
-//                    view.frame = self.searchViewFrame!
-//                    self.view.addSubview(view)
-//                    print("added back?")
-//                })
-//            }
-//        }
-//    }
-    
     @objc private func onLocationButtonPresed(_ sender: UIButton) {
         if let searchLocation = self.searchPin?.coordinate {
             centerMap(location: searchLocation, zoom: 0.01)
@@ -375,7 +320,8 @@ class MainVC: FUIMKMapFloorplanViewController {
         annotation.coordinate = mapItem.placemark.coordinate
         annotation.title = mapItem.name
         annotation.subtitle = mapItem.placemark.title
-        mapView.showAnnotations([annotation], animated: true)
+        mapView.addAnnotation(annotation)
+        centerMap(location: mapItem.placemark.coordinate, zoom: 0.01)
         searchPin = annotation
         //Get new SchoolPins
         fetchSchoolOffers(location: mapItem.placemark.coordinate)
@@ -462,12 +408,6 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
         cell.subheadlineText = detail.subTitle
         cell.tintColor = .preferredFioriColor(forStyle: .map1)
         if let color = detail.color {
-            //let myMutableString = NSMutableAttributedString(string: detail.title)
-            //let openIndex = detail.title.firstIndex(of: "(")
-            //let colorLength = detail.title.count - openIndex.hashValue - 1
-            //let range = NSRange(location: openIndex.hashValue, length: colorLength)
-            //myMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: color, range: range)
-            //cell.headlineLabel.attributedText = myMutableString
             cell.headlineLabel.textColor = color
             //cell.subheadlineLabel.textColor = color
         }
@@ -602,20 +542,3 @@ extension MainVC: SPPermissionsDataSource {
         return cell
     }
 }
-//extension UIView {
-//    func setIsHidden(_ hidden: Bool, animated: Bool) {
-//        if animated {
-//            if self.isHidden && !hidden {
-//                self.alpha = 0.0
-//                self.isHidden = false
-//            }
-//            UIView.animate(withDuration: 0.25, animations: {
-//                self.alpha = hidden ? 0.0 : 1.0
-//            }) { (complete) in
-//                self.isHidden = hidden
-//            }
-//        } else {
-//            self.isHidden = hidden
-//        }
-//    }
-//}
