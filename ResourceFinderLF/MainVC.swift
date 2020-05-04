@@ -75,6 +75,7 @@ class MainVC: FUIMKMapFloorplanViewController {
         locationManager = CLLocationManager()
         locationManager?.delegate = self
         
+        searchCompleter.resultTypes = .address
         searchCompleter.delegate = self
         
         setupDetailPanel()
@@ -422,6 +423,7 @@ class MainVC: FUIMKMapFloorplanViewController {
                 self.mapView.removeAnnotations(self.schoolPins)
             }
             self.schoolPins = pins
+            self.detailPanel.searchResults.tableView.reloadData()
             self.mapView.showAnnotations(pins, animated: true)
             if pins.count == 0 {
                 SVProgressHUD.showInfo(withStatus: "No resources found")
@@ -457,6 +459,22 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
         cell.isUserInteractionEnabled = true
         cell.backgroundColor = UIColor.clear
         cell.tintColor = .preferredFioriColor(forStyle: .map1)
+        //let image = FUIIconLibrary.map.panel.point.withRenderingMode(.alwaysTemplate)
+        cell.detailImage = UIImage(systemName: "mappin.circle.fill")
+        return cell
+    }
+    
+    private func setResourceCell(cell: FUIObjectTableViewCell, schoolPin: SchoolPin) -> FUIObjectTableViewCell {
+        cell.headlineText = schoolPin.school.name
+        cell.subheadlineText = schoolPin.school.address
+        cell.isUserInteractionEnabled = true
+        cell.backgroundColor = UIColor.clear
+        cell.tintColor = .preferredFioriColor(forStyle: .map1)
+        if schoolPin.isOfferAvailableToday {
+            cell.detailImage = UIImage(named: "food-icon-positive")
+        } else {
+            cell.detailImage = UIImage(named: "food-icon-negative")
+        }
         return cell
     }
     
@@ -475,9 +493,46 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
+
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if tableView == self.detailPanel.searchResults.tableView {
+            if section == 0 {
+                return "Address"
+            } else {
+                return "Schools"
+            }
+        }
+        return ""
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        (view as! UITableViewHeaderFooterView).contentView.backgroundColor = UIColor.clear
+        (view as! UITableViewHeaderFooterView).backgroundView?.backgroundColor = UIColor.clear
+        (view as! UITableViewHeaderFooterView).textLabel?.textColor = .preferredFioriColor(forStyle: .map1)
+    }
+    
+//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//        let vw = UIView()
+//        vw.backgroundColor = UIColor.clear
+//
+//        return vw
+//    }
+
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        if tableView == self.detailPanel.searchResults.tableView {
+            return 2
+        }
+        return 1
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableView == self.detailPanel.searchResults.tableView {
-            return searchResults.count
+            if section == 0 {
+                return searchResults.count
+            } else {
+                return schoolPins.count
+            }
         } else {
             return details.count
         }
@@ -496,17 +551,30 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
             let detailCell = tableView.dequeueReusableCell(withIdentifier: FUIObjectTableViewCell.reuseIdentifier, for: indexPath) as! FUIObjectTableViewCell
             return setContentCell(cell: detailCell, detail: detail)
         } else {
-            let searchCell = tableView.dequeueReusableCell(withIdentifier: FUIObjectTableViewCell.reuseIdentifier, for: indexPath) as! FUIObjectTableViewCell
-            let searchResult = searchResults[indexPath.row]
-            return setSearchCell(cell: searchCell, searchResult: searchResult)
+            if indexPath.section == 0 {
+                let searchCell = tableView.dequeueReusableCell(withIdentifier: FUIObjectTableViewCell.reuseIdentifier, for: indexPath) as! FUIObjectTableViewCell
+                let searchResult = searchResults[indexPath.row]
+                return setSearchCell(cell: searchCell, searchResult: searchResult)
+            } else {
+                //Resource Cell
+                let resourceCell = tableView.dequeueReusableCell(withIdentifier: FUIObjectTableViewCell.reuseIdentifier, for: indexPath) as! FUIObjectTableViewCell
+                let schoolPin = schoolPins[indexPath.row]
+                return setResourceCell(cell: resourceCell, schoolPin: schoolPin)
+            }
         }
         
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableView == detailPanel.searchResults.tableView {
-            let searchItem = searchResults[indexPath.row]
-            onAddressSelect(searchItem)
+            if indexPath.section == 0 {
+                let searchItem = searchResults[indexPath.row]
+                onAddressSelect(searchItem)
+            } else {
+                let schoolPin = schoolPins[indexPath.row]
+                centerMap(location: schoolPin.coordinate, zoom: 0.01)
+                //setDetailPanel(schoolPin: schoolPin)
+            }
         }
     }
 
@@ -550,7 +618,7 @@ extension MainVC: UISearchBarDelegate {
 extension MainVC: MKLocalSearchCompleterDelegate {
     
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-        searchResults = completer.results
+        searchResults = Array(completer.results.prefix(6))
         self.detailPanel.searchResults.tableView.reloadData()
     }
     
