@@ -87,7 +87,7 @@ class MainVC: FUIMKMapFloorplanViewController {
         var closedItem = FUIMapLegendItem(title: "Not Available Today")
         closedItem.backgroundColor = .preferredFioriColor(forStyle: .negative)
         closedItem.icon = FUIMapLegendIcon(glyphImage: "")
-        legend.headerTextView.text = "Legend"
+        legend.headerTextView.text = "Availability"
         legend.items = [availableItem, closedItem]
     }
     
@@ -128,7 +128,10 @@ class MainVC: FUIMKMapFloorplanViewController {
         
         if UIDevice.current.userInterfaceIdiom == .pad {
             //Add hide and legend button if an iPad
-            toolbarItems.append(toolbar.items[2])
+            let hideButton = toolbar.items[2]
+            hideButton.setImage(FUIIconLibrary.map.legend.clearAllOn, for: .normal)
+            hideButton.setImage(FUIIconLibrary.map.legend.clearAllOff, for: .selected)
+            toolbarItems.append(hideButton)
             toolbarItems.append(toolbar.items[3])
         }
         
