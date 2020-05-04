@@ -30,9 +30,12 @@ class MainVC: FUIMKMapFloorplanViewController {
     
     var details = [Detail]()
     var schoolPins = [SchoolPin]()
-    var searchResults = [MKMapItem]()
+    //var searchResults = [MKMapItem]()
     var searchPin: MKPointAnnotation?
     var isNotDetermined = false
+    
+    var searchCompleter = MKLocalSearchCompleter()
+    var searchResults = [MKLocalSearchCompletion]()
     
     var searchIsDisplayed = true
     var searchViewFrame: CGRect?
@@ -71,6 +74,8 @@ class MainVC: FUIMKMapFloorplanViewController {
         
         locationManager = CLLocationManager()
         locationManager?.delegate = self
+        
+        searchCompleter.delegate = self
         
         setupDetailPanel()
         setupToolbar()
@@ -244,17 +249,17 @@ class MainVC: FUIMKMapFloorplanViewController {
         let searchRequest = MKLocalSearch.Request()
         searchRequest.naturalLanguageQuery = searchText
         searchRequest.region = mapView.region
-        SVProgressHUD.show()
+        //SVProgressHUD.show()
         let search = MKLocalSearch(request: searchRequest)
         search.start { response, error in
             guard let response = response else {
                 //No MapItems found
                 print("Error: \(error?.localizedDescription ?? "Unknown error").")
-                SVProgressHUD.showInfo(withStatus: "No results found")
+                //SVProgressHUD.showInfo(withStatus: "No results found")
                 return
             }
-            SVProgressHUD.dismiss()
-            self.searchResults = response.mapItems
+            //SVProgressHUD.dismiss()
+            //self.searchResults = response.mapItems
             self.detailPanel.searchResults.tableView.reloadData()
         }
     }
@@ -315,28 +320,46 @@ class MainVC: FUIMKMapFloorplanViewController {
         }
     }
     
-    private func onAddressSelect(_ mapItem: MKMapItem) {
-        //Remove previous pin if it exists
-        if let prevPin = searchPin {
-            mapView.removeAnnotations([prevPin])
-        }
-        //Remove old SchoolPins. Will get new pins
-        mapView.removeAnnotations(schoolPins)
-        schoolPins = [SchoolPin]()
-        //Place New AddressPin
-        let annotation = MKPointAnnotation()
-        annotation.coordinate = mapItem.placemark.coordinate
-        annotation.title = mapItem.name
-        annotation.subtitle = mapItem.placemark.title
-        mapView.addAnnotation(annotation)
-        centerMap(location: mapItem.placemark.coordinate, zoom: 0.01)
-        searchPin = annotation
-        //Get new SchoolPins
-        fetchSchoolOffers(location: mapItem.placemark.coordinate)
-        
-        self.detailPanel.searchResults.searchBar.endEditing(true)
-        DispatchQueue.main.async {
-            self.detailPanel.popChildViewController()
+    private func onAddressSelect(_ completion: MKLocalSearchCompletion) {
+        let request = MKLocalSearch.Request(completion: completion)
+        //let searchRequest = MKLocalSearch.Request()
+        //searchRequest.region = mapView.region
+        //SVProgressHUD.show()
+        let search = MKLocalSearch(request: request)
+        search.start { response, error in
+            guard let response = response, response.mapItems.count > 0 else {
+                //No MapItems found
+                print("Error: \(error?.localizedDescription ?? "Unknown error").")
+                //SVProgressHUD.showInfo(withStatus: "No results found")
+                return
+            }
+            //SVProgressHUD.dismiss()
+            //self.searchResults = response.mapItems
+            //self.detailPanel.searchResults.tableView.reloadData()
+            let mapItem = response.mapItems[0]
+            
+            //Remove previous pin if it exists
+            if let prevPin = self.searchPin {
+                self.mapView.removeAnnotations([prevPin])
+            }
+            //Remove old SchoolPins. Will get new pins
+            self.mapView.removeAnnotations(self.schoolPins)
+            self.schoolPins = [SchoolPin]()
+            //Place New AddressPin
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = mapItem.placemark.coordinate
+            annotation.title = mapItem.name
+            annotation.subtitle = mapItem.placemark.title
+            self.mapView.addAnnotation(annotation)
+            self.centerMap(location: mapItem.placemark.coordinate, zoom: 0.01)
+            self.searchPin = annotation
+            //Get new SchoolPins
+            self.fetchSchoolOffers(location: mapItem.placemark.coordinate)
+            
+            self.detailPanel.searchResults.searchBar.endEditing(true)
+//            DispatchQueue.main.async {
+//                self.detailPanel.popChildViewController()
+//            }
         }
     }
     
@@ -424,10 +447,10 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
-    private func setSearchCell(cell: FUIObjectTableViewCell, searchResult: MKMapItem) -> FUIObjectTableViewCell {
-        let placemark = searchResult.placemark
-        cell.headlineText = searchResult.name
-        cell.subheadlineText = placemark.title
+    private func setSearchCell(cell: FUIObjectTableViewCell, searchResult: MKLocalSearchCompletion) -> FUIObjectTableViewCell {
+        //let placemark = searchResult.placemark
+        cell.headlineText = searchResult.title
+        cell.subheadlineText = searchResult.subtitle
         cell.isUserInteractionEnabled = true
         cell.backgroundColor = UIColor.clear
         cell.tintColor = .preferredFioriColor(forStyle: .map1)
@@ -510,10 +533,26 @@ extension MainVC: MKMapViewDelegate, FUIMKMapViewDelegate {
 }
 extension MainVC: UISearchBarDelegate {
     
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        if let searchText = searchBar.searchTextField.text, searchText != "" {
-            searchForAddreses(searchText)
-        }
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        searchCompleter.queryFragment = searchText
+    }
+    
+//    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+//        if let searchText = searchBar.searchTextField.text, searchText != "" {
+//            searchForAddreses(searchText)
+//        }
+//    }
+    
+}
+extension MainVC: MKLocalSearchCompleterDelegate {
+    
+    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+        searchResults = completer.results
+        self.detailPanel.searchResults.tableView.reloadData()
+    }
+    
+    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
+        // handle error
     }
     
 }
