@@ -514,9 +514,9 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if tableView == self.detailPanel.searchResults.tableView {
             if section == 0 {
-                return "Addresses"
+                return searchResults.count > 0 ? "Addresses" : ""
             } else {
-                return "Resources"
+                return schoolPins.count > 0 ? "Resources" : ""
             }
         }
         return ""
