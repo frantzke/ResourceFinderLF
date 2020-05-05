@@ -35,6 +35,7 @@ class SchoolPin: NSObject, MKAnnotation {
             return .preferredFioriColor(forStyle: .negative)
         }
     }
+    var distance: Double?
     
     init(title: String?, school: School, coordinate: CLLocationCoordinate2D) {
         self.title = title

@@ -51,6 +51,7 @@ class SchoolOfferManager {
             
             // Convert JSON SchoolOffer Array to Swift SchoolPins Array
             let today = Date()
+            let searchLocation = CLLocation(latitude: lat, longitude: long)
             for jsonSchoolOffer in jsonSchoolOffers {
                 let schoolOffer = self.jsonToSchoolOffer(jsonSchoolOffer)
                 //Filter out offers where end date is after todays date.
@@ -66,10 +67,12 @@ class SchoolOfferManager {
                         schoolPins[index] = schoolPin
                     } else {
                         //If School not in School Pins: Create new schoolPin, append offer, and add to SchoolPins
+                        let schoolLocation = CLLocation(latitude: schoolOffer.school.lat, longitude: schoolOffer.school.long)
                         let schoolPin = SchoolPin(
                             title: schoolOffer.school.name,
                             school: schoolOffer.school,
                             coordinate: CLLocationCoordinate2D(latitude: schoolOffer.school.lat, longitude: schoolOffer.school.long))
+                        schoolPin.distance = searchLocation.distance(from: schoolLocation)
                         schoolPin.offers.append(schoolOffer.offer)
                         schoolPins.append(schoolPin)
                     }
@@ -95,7 +98,10 @@ class SchoolOfferManager {
 //                    schoolPinsSet.insert(schoolPin)
 //                }
 //            }
-            
+            //Sort Pins by distance
+            schoolPins.sort {
+                $0.distance ?? 0 < $1.distance ?? 0
+            }
             callback(schoolPins)
         }
     }

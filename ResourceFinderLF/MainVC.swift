@@ -30,6 +30,8 @@ class MainVC: FUIMKMapFloorplanViewController {
     
     var details = [Detail]()
     var schoolPins = [SchoolPin]()
+    var filteredSchoolPins = [SchoolPin]()
+    var isFiltering = false
     //var searchResults = [MKMapItem]()
     var searchPin: MKPointAnnotation?
     var isNotDetermined = false
@@ -37,9 +39,9 @@ class MainVC: FUIMKMapFloorplanViewController {
     var searchCompleter = MKLocalSearchCompleter()
     var searchResults = [MKLocalSearchCompletion]()
     
-    var searchIsDisplayed = true
-    var searchViewFrame: CGRect?
-    var searchView: UIView?
+//    var searchIsDisplayed = true
+//    var searchViewFrame: CGRect?
+//    var searchView: UIView?
     
     //MARK: Initialization
     
@@ -161,6 +163,7 @@ class MainVC: FUIMKMapFloorplanViewController {
         let span = MKCoordinateSpan(latitudeDelta: zoom, longitudeDelta: zoom)
         let region = MKCoordinateRegion(center: location, span: span)
         self.mapView.setRegion(region, animated: true)
+        searchCompleter.region = region
     }
     
     private func clearMapOverlays() {
@@ -312,6 +315,20 @@ class MainVC: FUIMKMapFloorplanViewController {
         }
     }
     
+    private func filterSchoolPins(_ searchText: String) {
+        let s = searchText.lowercased()
+        if searchText != "" {
+            isFiltering = true
+            filteredSchoolPins = schoolPins.filter { (pin: SchoolPin) -> Bool in
+                return pin.school.name.lowercased().contains(s) || pin.school.address.lowercased().contains(s)
+            }
+        } else {
+            isFiltering = false
+            filteredSchoolPins = schoolPins
+        }
+        detailPanel.searchResults.tableView.reloadData()
+    }
+    
     //MARK: Actions
     
     @objc private func onLocationButtonPresed(_ sender: UIButton) {
@@ -349,6 +366,7 @@ class MainVC: FUIMKMapFloorplanViewController {
             //Remove old SchoolPins. Will get new pins
             self.mapView.removeAnnotations(self.schoolPins)
             self.schoolPins = [SchoolPin]()
+            self.filteredSchoolPins = [SchoolPin]()
             //Place New AddressPin
             let annotation = MKPointAnnotation()
             annotation.coordinate = mapItem.placemark.coordinate
@@ -359,8 +377,6 @@ class MainVC: FUIMKMapFloorplanViewController {
             self.searchPin = annotation
             //Get new SchoolPins
             self.fetchSchoolOffers(location: mapItem.placemark.coordinate)
-            
-            self.detailPanel.searchResults.searchBar.endEditing(true)
 //            DispatchQueue.main.async {
 //                self.detailPanel.popChildViewController()
 //            }
@@ -423,6 +439,7 @@ class MainVC: FUIMKMapFloorplanViewController {
                 self.mapView.removeAnnotations(self.schoolPins)
             }
             self.schoolPins = pins
+            self.filteredSchoolPins = schoolPins
             self.detailPanel.searchResults.tableView.reloadData()
             self.mapView.showAnnotations(pins, animated: true)
             if pins.count == 0 {
@@ -497,25 +514,32 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if tableView == self.detailPanel.searchResults.tableView {
             if section == 0 {
-                return "Address"
+                return "Addresses"
             } else {
-                return "Schools"
+                return "Resources"
             }
         }
         return ""
     }
-    
-    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        (view as! UITableViewHeaderFooterView).contentView.backgroundColor = UIColor.clear
-        (view as! UITableViewHeaderFooterView).backgroundView?.backgroundColor = UIColor.clear
-        (view as! UITableViewHeaderFooterView).textLabel?.textColor = .preferredFioriColor(forStyle: .map1)
-    }
+
+//    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+//        (view as! UITableViewHeaderFooterView).contentView.backgroundColor = UIColor.clear
+//        (view as! UITableViewHeaderFooterView).backgroundView?.backgroundColor = UIColor.clear
+//        (view as! UITableViewHeaderFooterView).textLabel?.textColor = .preferredFioriColor(forStyle: .map1)
+//    }
     
 //    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-//        let vw = UIView()
-//        vw.backgroundColor = UIColor.clear
-//
-//        return vw
+//        let view = UIView()
+//        view.backgroundColor = UIColor.clear
+//        let label = UILabel()
+//        label.textColor = .preferredFioriColor(forStyle: .map1)
+//        if section == 0 {
+//            label.text = "Addresses"
+//        } else {
+//            label.text = "Schools"
+//        }
+//        view.addSubview(label)
+//        return view
 //    }
 
     
@@ -531,7 +555,7 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
             if section == 0 {
                 return searchResults.count
             } else {
-                return schoolPins.count
+                return isFiltering ? filteredSchoolPins.count : schoolPins.count
             }
         } else {
             return details.count
@@ -557,8 +581,8 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
                 return setSearchCell(cell: searchCell, searchResult: searchResult)
             } else {
                 //Resource Cell
-                let resourceCell = tableView.dequeueReusableCell(withIdentifier: FUIObjectTableViewCell.reuseIdentifier, for: indexPath) as! FUIObjectTableViewCell
-                let schoolPin = schoolPins[indexPath.row]
+                let resourceCell = tableView.dequeueReusableCell(withIdentifier: FUIObjectTableViewCell.reuseIdentifier, for: indexPath) as! FUIObjectTableViewCell                
+                let schoolPin = isFiltering ? filteredSchoolPins[indexPath.row] : schoolPins[indexPath.row]
                 return setResourceCell(cell: resourceCell, schoolPin: schoolPin)
             }
         }
@@ -571,10 +595,17 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
                 let searchItem = searchResults[indexPath.row]
                 onAddressSelect(searchItem)
             } else {
-                let schoolPin = schoolPins[indexPath.row]
+                let schoolPin = isFiltering ? filteredSchoolPins[indexPath.row] : schoolPins[indexPath.row]
                 centerMap(location: schoolPin.coordinate, zoom: 0.01)
-                //setDetailPanel(schoolPin: schoolPin)
+                setDetailPanel(schoolPin: schoolPin)
+                selectedLocation = schoolPin
+                DispatchQueue.main.async {
+                    self.detailPanel.pushChildViewController()
+                }
             }
+            self.detailPanel.searchResults.searchBar.endEditing(true)
+            detailPanel.searchResults.searchBar.text = ""
+            isFiltering = false
         }
     }
 
@@ -606,6 +637,7 @@ extension MainVC: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         searchCompleter.queryFragment = searchText
+        filterSchoolPins(searchText)
     }
     
 //    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -618,7 +650,7 @@ extension MainVC: UISearchBarDelegate {
 extension MainVC: MKLocalSearchCompleterDelegate {
     
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-        searchResults = Array(completer.results.prefix(6))
+        searchResults = Array(completer.results.prefix(4))
         self.detailPanel.searchResults.tableView.reloadData()
     }
     
