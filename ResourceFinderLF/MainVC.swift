@@ -377,9 +377,9 @@ class MainVC: FUIMKMapFloorplanViewController {
             self.searchPin = annotation
             //Get new SchoolPins
             self.fetchSchoolOffers(location: mapItem.placemark.coordinate)
-//            DispatchQueue.main.async {
-//                self.detailPanel.popChildViewController()
-//            }
+            DispatchQueue.main.async {
+                self.detailPanel.popChildViewController()
+            }
         }
     }
     
@@ -650,7 +650,7 @@ extension MainVC: UISearchBarDelegate {
 extension MainVC: MKLocalSearchCompleterDelegate {
     
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-        searchResults = Array(completer.results.prefix(4))
+        searchResults = Array(completer.results.prefix(3))
         self.detailPanel.searchResults.tableView.reloadData()
     }
     
