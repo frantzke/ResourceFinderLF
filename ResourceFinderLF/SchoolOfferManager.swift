@@ -20,7 +20,7 @@ class SchoolOfferManager {
         //let eligibilityCat = "36a00731-7f07-42a8-a141-f4303d41a10b"
         //let assistSubType = "03487ac3-e0db-43af-852b-2ebf198e3a0f"
         //let params="?$top=10&$select=TIMEFROM,TIMETO,NAME,DESCRIPTION,LAT,LONG,OFFERDETAILS"
-        let urlString = serviceRoot +  "/SchoolOffers(LATITUDE=\(String(lat)),LONGITUDE=\(String(long)),DISTANCEFORSEARCH=\(String(dist)),ELIGIBILITYCAT=%27%27%2736a00731-7f07-42a8-a141-f4303d41a10b%27%27%27,ASSISTSUBTYPE=%27%27%2703487ac3-e0db-43af-852b-2ebf198e3a0f%27%27%27)/Set"
+        let urlString = serviceRoot +  "/SchoolOffers(LATITUDE=\(String(lat)),LONGITUDE=\(String(long)),DISTANCEFORSEARCH=\(String(dist)))/Set"
         
         // header to be sent in the request
         let headers: HTTPHeaders = [
