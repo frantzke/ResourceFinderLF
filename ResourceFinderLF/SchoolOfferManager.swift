@@ -13,13 +13,10 @@ import MapKit
 
 class SchoolOfferManager {
     
-    static let serviceRoot = "https://sap4good-dev-sap4kids-srv.cfapps.us10.hana.ondemand.com/map"
+    static let serviceRoot = "https://sap4kids-prod-sap4kids.cfapps.us10.hana.ondemand.com/public/map"
     
     //Call backend for SchoolOffers. Return SchoolPins array, or in case of error nil
     static func getSchoolPins(lat: Double, long: Double, dist: Int, callback: @escaping ([SchoolPin]?) -> Void ) {
-        //let eligibilityCat = "36a00731-7f07-42a8-a141-f4303d41a10b"
-        //let assistSubType = "03487ac3-e0db-43af-852b-2ebf198e3a0f"
-        //let params="?$top=10&$select=TIMEFROM,TIMETO,NAME,DESCRIPTION,LAT,LONG,OFFERDETAILS"
         let urlString = serviceRoot +  "/SchoolOffers(LATITUDE=\(String(lat)),LONGITUDE=\(String(long)),DISTANCEFORSEARCH=\(String(dist)))/Set"
         
         // header to be sent in the request
@@ -55,10 +52,15 @@ class SchoolOfferManager {
             for jsonSchoolOffer in jsonSchoolOffers {
                 let schoolOffer = self.jsonToSchoolOffer(jsonSchoolOffer)
                 //Filter out offers where end date is after todays date.
-                if schoolOffer.school.endDateValue == nil {
-                    print("End date was nil")
+                let endDate: Date
+                if let date = schoolOffer.school.endDateValue {
+                    endDate = date
+                } else {
+                    var components = DateComponents()
+                    components.setValue(1, for: .day)
+                    endDate = Calendar.current.date(byAdding: components, to: Date()) ?? Date()
                 }
-                if let endDate = schoolOffer.school.endDateValue, endDate.compare(today) == .orderedDescending {
+                if endDate.compare(today) == .orderedDescending {
                     //Check if School is already in SchoolPins
                     if let index = schoolPins.firstIndex(where: { $0.school == schoolOffer.school }) {
                         //If School already in SchoolPins: Append offer to existing SchoolPin and update SchoolPins
@@ -77,27 +79,10 @@ class SchoolOfferManager {
                         schoolPins.append(schoolPin)
                     }
                 }
-                //else {
-                //    print("End date after todays date")
-                //}
             }
             
             //TODO: Use Sets to improve runtime
-//            var schoolPinsSet: Set<SchoolPin> = Set<SchoolPin>()
-//            for schoolOffer in fetchedSchoolOffers {
-//                let schoolPin = SchoolPin(title: schoolOffer.school.name,
-//                school: schoolOffer.school,
-//                coordinate: CLLocationCoordinate2D(latitude: schoolOffer.school.lat, longitude: schoolOffer.school.long))
-//                if let index = schoolPinsSet.firstIndex(of: schoolPin) {
-//                    let schoolPin = schoolPinsSet[index]
-//                    //schoolPin
-//                    //school.offers.append(schoolOffer.offer)
-//
-//                } else {
-//                    schoolPin.offers
-//                    schoolPinsSet.insert(schoolPin)
-//                }
-//            }
+
             //Sort Pins by distance
             schoolPins.sort {
                 $0.distance ?? 0 < $1.distance ?? 0
