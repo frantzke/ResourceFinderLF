@@ -1,12 +1,12 @@
 # Resource Finder
 
-The Resource Finder app assists students and families across the States with finding nearby resouces such as food or financial assistance. In response to COVID-19, SAP and GENYOUth partnered to provide data on schools and other institutions providing assistance. This iOS app uses that data to connect users with those institutions. 
+The Resource Finder app assists students and families across the States with finding nearby resouces such as food or financial assistance. In response to COVID-19, SAP and GENYOUth partnered to provide data on schools and other institutions providing assistance. This iOS app uses that data to connect users with those institutions by leveraging the SAP iOS SDK, MAPKit, and location services. 
 
-## Installation Instructions
-In the ResourceFinderLF directory run: `pod install`
-Then, run the app from XCode
+### Installation Instructions
+* In the ResourceFinderLF directory run: `pod install`
+* Then, run the app from XCode
 
-## About GENYOUth + SAP 
+### About GENYOUth + SAP 
 National child health and wellness nonprofit, GENYOUth, and market leader in enterprise software sales, SAP are partnering to provide resources to communities across the country. In light of the current health situation with COVID-19, the disruption to students' lives with the closures of schools across the U.S., and the economic impact families are facing, it's our goal to ensure families have access to the food and resources they need when they need them.
 
 SAP is the market leader in enterprise application software, helping companies of all sizes and in all industries run at their best: 77% of the world's transaction revenue touches an SAP system. Our machine learning, Internet of Things (IoT), and advanced analytics technologies help turn customers' businesses into intelligent enterprises. Our end-to-end suite of applications and services enables our customers to operate profitably, adapt continuously, and make a difference. With a global network of customers, partners, employees, and thought leaders, SAP helps the world run better and improves people's lives.
