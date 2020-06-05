@@ -65,8 +65,8 @@ struct School: Hashable {
         df.dateStyle = .short
         df.timeStyle = .none
         df.dateFormat = "MMM d"
-        let start = self.startDateValue == nil ? "Unkown" : df.string(from: startDateValue ?? Date())
-        let end: String = self.endDateValue == nil ? "unkown" : df.string(from: self.endDateValue ?? Date())
+        let start = self.startDateValue == nil ? "Unknown" : df.string(from: startDateValue ?? Date())
+        let end: String = self.endDateValue == nil ? "unknown" : df.string(from: self.endDateValue ?? Date())
         return "\(start) to \(end)"
     }
 }

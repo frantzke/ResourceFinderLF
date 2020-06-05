@@ -14,6 +14,7 @@ import MapKit
 class SchoolOfferManager {
     
     static let serviceRoot = "https://sap4kids-prod-sap4kids.cfapps.us10.hana.ondemand.com/public/map"
+    //Dev URL: https://sap4good-dev-sap4kids-srv.cfapps.us10.hana.ondemand.com/map
     
     //Call backend for SchoolOffers. Return SchoolPins array, or in case of error nil
     static func getSchoolPins(lat: Double, long: Double, dist: Int, callback: @escaping ([SchoolPin]?) -> Void ) {

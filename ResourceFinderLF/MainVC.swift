@@ -194,17 +194,18 @@ class MainVC: FUIMKMapFloorplanViewController {
         }
         panelDetails.append(contentsOf: [
             Detail(title: "How", subTitle: schoolPin.school.how, image: UIImage(systemName: "questionmark.circle.fill")),
-            Detail(title: "Who", subTitle: schoolPin.school.who, image: UIImage(systemName: "person.circle.fill")),
-            Detail(title: "From", subTitle: schoolPin.school.datesInterval, image: UIImage(systemName: "clock.fill")),
+            Detail(title: "Who", subTitle: schoolPin.school.who, image: UIImage(systemName: "person.circle.fill"))
         ])
+        if schoolPin.school.datesInterval != "Unknown to unknown" {
+            panelDetails.append(Detail(title: "From", subTitle: schoolPin.school.datesInterval, image: UIImage(systemName: "clock.fill")))
+        }
         let foodIcon = UIImage(named: "food-icon")
         let sortedOffers = schoolPin.offers.sorted(by: { $0.sortOrder < $1.sortOrder })
         for offer in sortedOffers {
-            let detail = Detail(
-                    title: offer.when,
-                    subTitle: offer.time,
-                    image: foodIcon)
-            //color: offer.isAvailableToday ? .preferredFioriColor(forStyle: .positive) : .preferredFioriColor(forStyle: .negative)
+            var detail = Detail(title: offer.when, subTitle: offer.time, image: foodIcon)
+            if offer.assistanceType != "Food" {
+                detail.image = UIImage(systemName: "heart.circle.fill")
+            }
             panelDetails.append(detail)
         }
         //details.append(Detail(title: "Fastest Route", subTitle: ""))
@@ -430,7 +431,7 @@ class MainVC: FUIMKMapFloorplanViewController {
     
     private func fetchSchoolOffers(location: CLLocationCoordinate2D) {
         SVProgressHUD.show(withStatus: "Searching for resources")
-        SchoolOfferManager.getSchoolPins(lat: location.latitude, long: location.longitude, dist: 150, callback: didFetchSchoolPins)
+        SchoolOfferManager.getSchoolPins(lat: location.latitude, long: location.longitude, dist: 100, callback: didFetchSchoolPins)
     }
     
     func didFetchSchoolPins(fetchedSchoolPins: [SchoolPin]?) {

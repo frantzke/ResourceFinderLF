@@ -41,7 +41,13 @@ class Offer {
         return timeToString
     }
     var when: String {
-        var whenStr = "\(assistanceSubtype) ("
+        var type: String?
+        if self.assistanceType != "Food" {
+            type = self.assistanceType
+        } else {
+            type = self.assistanceSubtype
+        }
+        var whenStr = "\(type ?? "") ("
         whenStr += mon ?? false ? "Mo, " : ""
         whenStr += tue ?? false ? "Tu, " : ""
         whenStr += wed ?? false ? "We, " : ""

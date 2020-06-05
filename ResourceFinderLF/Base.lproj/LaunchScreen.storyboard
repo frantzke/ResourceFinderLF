@@ -2,7 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -19,7 +19,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ClockcowrkLogo.png" translatesAutoresizingMaskIntoConstraints="NO" id="73b-uY-xFs">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ClockworkLogo.png" translatesAutoresizingMaskIntoConstraints="NO" id="73b-uY-xFs">
                                 <rect key="frame" x="131.33333333333334" y="341" width="112.33333333333334" height="130"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="73b-uY-xFs" secondAttribute="height" multiplier="259:300" id="UHk-me-TEy"/>
@@ -50,6 +50,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="ClockcowrkLogo.png" width="259.44000244140625" height="300.72000122070312"/>
+        <image name="ClockworkLogo.png" width="259.44000244140625" height="300.72000122070312"/>
     </resources>
 </document>

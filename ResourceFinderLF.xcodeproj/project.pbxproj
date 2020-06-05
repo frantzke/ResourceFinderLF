@@ -52,11 +52,11 @@
 		D7185FB824571B1900C88974 /* School.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7185FB724571B1900C88974 /* School.swift */; };
 		D7185FBA24571D2700C88974 /* Offer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7185FB924571D2600C88974 /* Offer.swift */; };
 		D7185FBC245722C400C88974 /* SchoolPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7185FBB245722C400C88974 /* SchoolPin.swift */; };
+		D76832CB247C022700AAC198 /* ClockworkLogo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D76832CA247C022700AAC198 /* ClockworkLogo@2x.png */; };
 		D7A33AAC2452070C00494AC9 /* SchoolOfferManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A33AAB2452070C00494AC9 /* SchoolOfferManager.swift */; };
 		D7A33AAF24520EA000494AC9 /* SchoolOffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A33AAE24520EA000494AC9 /* SchoolOffer.swift */; };
 		D7A33AB72452257700494AC9 /* ResourceFinderLFTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A33AB62452257700494AC9 /* ResourceFinderLFTests.swift */; };
 		D7A33ABF245225E100494AC9 /* SchoolOfferManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A33ABE245225E100494AC9 /* SchoolOfferManagerTests.swift */; };
-		D7EEDDA1245CAFFA00B8437E /* ClockcowrkLogo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D7EEDDA0245CAFFA00B8437E /* ClockcowrkLogo@2x.png */; };
 		EE326CC45C7EA533F61C963E /* Addresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2016C8F4783729B37EBBA1C1 /* Addresses.swift */; };
 		EE4900C8C243F658542F69D0 /* Schools.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEEFB5587CFDB9240706B68D /* Schools.swift */; };
 		F06E51B6CEF22739B6BCBF78 /* EntityContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F53EDA36F4CD9C2E27090E /* EntityContainer.swift */; };
@@ -145,13 +145,13 @@
 		D7185FB724571B1900C88974 /* School.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = School.swift; sourceTree = "<group>"; };
 		D7185FB924571D2600C88974 /* Offer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Offer.swift; sourceTree = "<group>"; };
 		D7185FBB245722C400C88974 /* SchoolPin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolPin.swift; sourceTree = "<group>"; };
+		D76832CA247C022700AAC198 /* ClockworkLogo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ClockworkLogo@2x.png"; sourceTree = "<group>"; };
 		D7A33AAB2452070C00494AC9 /* SchoolOfferManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolOfferManager.swift; sourceTree = "<group>"; };
 		D7A33AAE24520EA000494AC9 /* SchoolOffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolOffer.swift; sourceTree = "<group>"; };
 		D7A33AB42452257700494AC9 /* ResourceFinderLFTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ResourceFinderLFTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7A33AB62452257700494AC9 /* ResourceFinderLFTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceFinderLFTests.swift; sourceTree = "<group>"; };
 		D7A33AB82452257700494AC9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D7A33ABE245225E100494AC9 /* SchoolOfferManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolOfferManagerTests.swift; sourceTree = "<group>"; };
-		D7EEDDA0245CAFFA00B8437E /* ClockcowrkLogo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ClockcowrkLogo@2x.png"; path = "../../../clockwork-app/Clockwork App/SupportFiles/Assets.xcassets/clockwork-logo.imageset/ClockcowrkLogo@2x.png"; sourceTree = "<group>"; };
 		DC716D2198A7979D3DFFE9D0 /* SchoolOffersParameters.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SchoolOffersParameters.swift; path = "Proxy Classes/public/SchoolOffersParameters.swift"; sourceTree = "<group>"; };
 		E3A0DB9485EE12ECF627C6AD /* EligiblityCategories.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EligiblityCategories.swift; path = "Proxy Classes/public/EligiblityCategories.swift"; sourceTree = "<group>"; };
 		E547F1E742F4A7CEE8A0A6BC /* DeliveryModeTexts.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DeliveryModeTexts.swift; path = "Proxy Classes/public/DeliveryModeTexts.swift"; sourceTree = "<group>"; };
@@ -329,11 +329,11 @@
 		D708A27B244F7FC000C967A8 /* SupportFiles */ = {
 			isa = PBXGroup;
 			children = (
+				D76832CA247C022700AAC198 /* ClockworkLogo@2x.png */,
 				7A1315B81D4B982000A5DA56 /* AppDelegate.swift */,
 				7A1315C11D4B982000A5DA56 /* Assets.xcassets */,
 				7A1315C31D4B982000A5DA56 /* LaunchScreen.storyboard */,
 				1277F7601F8E66AC0060AF58 /* SAPLogo@2x.png */,
-				D7EEDDA0245CAFFA00B8437E /* ClockcowrkLogo@2x.png */,
 				7A1315C61D4B982000A5DA56 /* Info.plist */,
 			);
 			name = SupportFiles;
@@ -481,7 +481,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7A16F06D1FD1B3C700D2FABD /* README.md in Resources */,
-				D7EEDDA1245CAFFA00B8437E /* ClockcowrkLogo@2x.png in Resources */,
+				D76832CB247C022700AAC198 /* ClockworkLogo@2x.png in Resources */,
 				7A1315C51D4B982000A5DA56 /* LaunchScreen.storyboard in Resources */,
 				7A1315C21D4B982000A5DA56 /* Assets.xcassets in Resources */,
 				CBCA7A991E3778A9001AF49E /* Main.storyboard in Resources */,
