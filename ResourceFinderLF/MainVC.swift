@@ -27,21 +27,14 @@ class MainVC: FUIMKMapFloorplanViewController {
     var locationManager: CLLocationManager?
     var userLocation: CLLocationCoordinate2D?
     var selectedLocation: MKAnnotation?
-    
     var details = [Detail]()
     var schoolPins = [SchoolPin]()
     var filteredSchoolPins = [SchoolPin]()
     var isFiltering = false
-    //var searchResults = [MKMapItem]()
     var searchPin: MKPointAnnotation?
-    var isNotDetermined = false
-    
+    var isNotDetermined = false //If location service authorization is not determined
     var searchCompleter = MKLocalSearchCompleter()
     var searchResults = [MKLocalSearchCompletion]()
-    
-//    var searchIsDisplayed = true
-//    var searchViewFrame: CGRect?
-//    var searchView: UIView?
     
     //MARK: Initialization
     
@@ -147,7 +140,11 @@ class MainVC: FUIMKMapFloorplanViewController {
             willSet {
                 if let schoolPin = newValue as? SchoolPin {
                     markerTintColor = schoolPin.markerTintColor
-                    glyphImage = FUIIconLibrary.map.marker.cafe.withRenderingMode(.alwaysTemplate)
+                    if schoolPin.offers.count > 0, schoolPin.offers[0].assistanceType != "Food" {
+                        glyphImage = UIImage(systemName: "heart.circle.fill")
+                    } else {
+                        glyphImage = FUIIconLibrary.map.marker.cafe.withRenderingMode(.alwaysTemplate)
+                    }
                 } else {
                     markerTintColor = UIColor.systemBlue
                     glyphImage = FUIIconLibrary.system.me.withRenderingMode(.alwaysTemplate)
@@ -196,6 +193,7 @@ class MainVC: FUIMKMapFloorplanViewController {
             Detail(title: "How", subTitle: schoolPin.school.how, image: UIImage(systemName: "questionmark.circle.fill")),
             Detail(title: "Who", subTitle: schoolPin.school.who, image: UIImage(systemName: "person.circle.fill"))
         ])
+        //Show From cell if dates are known
         if schoolPin.school.datesInterval != "Unknown to unknown" {
             panelDetails.append(Detail(title: "From", subTitle: schoolPin.school.datesInterval, image: UIImage(systemName: "clock.fill")))
         }
@@ -203,12 +201,12 @@ class MainVC: FUIMKMapFloorplanViewController {
         let sortedOffers = schoolPin.offers.sorted(by: { $0.sortOrder < $1.sortOrder })
         for offer in sortedOffers {
             var detail = Detail(title: offer.when, subTitle: offer.time, image: foodIcon)
+            //Show heart image if assistance type is not Food
             if offer.assistanceType != "Food" {
                 detail.image = UIImage(systemName: "heart.circle.fill")
             }
             panelDetails.append(detail)
         }
-        //details.append(Detail(title: "Fastest Route", subTitle: ""))
         panelDetails.append(Detail(title: "Directions", subTitle: ""))
         self.details = panelDetails
         
@@ -245,7 +243,7 @@ class MainVC: FUIMKMapFloorplanViewController {
     
     private func showPermissions() {
         let controller = SPPermissions.dialog([.locationWhenInUse])
-        // Overide texts in controller
+        // Show Permission modal
         controller.headerText = "Permissions"
         controller.titleText = "Enable Location"
         controller.footerText = "Location services will make it easier to find your nearest resources"
@@ -257,17 +255,13 @@ class MainVC: FUIMKMapFloorplanViewController {
         let searchRequest = MKLocalSearch.Request()
         searchRequest.naturalLanguageQuery = searchText
         searchRequest.region = mapView.region
-        //SVProgressHUD.show()
         let search = MKLocalSearch(request: searchRequest)
         search.start { response, error in
-            guard let response = response else {
+            guard response != nil else {
                 //No MapItems found
                 print("Error: \(error?.localizedDescription ?? "Unknown error").")
-                //SVProgressHUD.showInfo(withStatus: "No results found")
                 return
             }
-            //SVProgressHUD.dismiss()
-            //self.searchResults = response.mapItems
             self.detailPanel.searchResults.tableView.reloadData()
         }
     }
@@ -308,7 +302,7 @@ class MainVC: FUIMKMapFloorplanViewController {
             
             //Pop child controller back after a delay
             //TODO: Come up with better soltion. -> Partially Dismiss Detail Panel
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                 self.detailPanel.pushChildViewController(completion: {
                     print("DID PUSH CHILDVIEWCONTROLLER")
                 })
@@ -344,20 +338,13 @@ class MainVC: FUIMKMapFloorplanViewController {
     
     private func onAddressSelect(_ completion: MKLocalSearchCompletion) {
         let request = MKLocalSearch.Request(completion: completion)
-        //let searchRequest = MKLocalSearch.Request()
-        //searchRequest.region = mapView.region
-        //SVProgressHUD.show()
         let search = MKLocalSearch(request: request)
         search.start { response, error in
             guard let response = response, response.mapItems.count > 0 else {
                 //No MapItems found
                 print("Error: \(error?.localizedDescription ?? "Unknown error").")
-                //SVProgressHUD.showInfo(withStatus: "No results found")
                 return
             }
-            //SVProgressHUD.dismiss()
-            //self.searchResults = response.mapItems
-            //self.detailPanel.searchResults.tableView.reloadData()
             let mapItem = response.mapItems[0]
             
             //Remove previous pin if it exists
@@ -463,7 +450,6 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
         cell.tintColor = .preferredFioriColor(forStyle: .map1)
         if let color = detail.color {
             cell.headlineLabel.textColor = color
-            //cell.subheadlineLabel.textColor = color
         }
         cell.detailImage = detail.image
         cell.isUserInteractionEnabled = false
@@ -471,13 +457,11 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     private func setSearchCell(cell: FUIObjectTableViewCell, searchResult: MKLocalSearchCompletion) -> FUIObjectTableViewCell {
-        //let placemark = searchResult.placemark
         cell.headlineText = searchResult.title
         cell.subheadlineText = searchResult.subtitle
         cell.isUserInteractionEnabled = true
         cell.backgroundColor = UIColor.clear
         cell.tintColor = .preferredFioriColor(forStyle: .map1)
-        //let image = FUIIconLibrary.map.panel.point.withRenderingMode(.alwaysTemplate)
         cell.detailImage = UIImage(systemName: "mappin.circle.fill")
         return cell
     }
@@ -487,11 +471,15 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
         cell.subheadlineText = schoolPin.school.address
         cell.isUserInteractionEnabled = true
         cell.backgroundColor = UIColor.clear
-        cell.tintColor = .preferredFioriColor(forStyle: .map1)
         if schoolPin.isOfferAvailableToday {
             cell.detailImage = UIImage(named: "food-icon-positive")
+            cell.tintColor = .preferredFioriColor(forStyle: .positive)
         } else {
             cell.detailImage = UIImage(named: "food-icon-negative")
+            cell.tintColor = .preferredFioriColor(forStyle: .negative)
+        }
+        if schoolPin.offers.count > 0, schoolPin.offers[0].assistanceType != "Food" {
+            cell.detailImage = UIImage(systemName: "heart.circle.fill")
         }
         return cell
     }
@@ -515,7 +503,6 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if tableView == self.detailPanel.searchResults.tableView {
             if section == 0 {
-//                searchResults.count > 0 ? "Addresses" : ""
                 return "Addresses"
             } else {
                 return schoolPins.count > 0 ? "Resources" : ""
@@ -523,27 +510,6 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
         }
         return ""
     }
-
-//    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-//        (view as! UITableViewHeaderFooterView).contentView.backgroundColor = UIColor.clear
-//        (view as! UITableViewHeaderFooterView).backgroundView?.backgroundColor = UIColor.clear
-//        (view as! UITableViewHeaderFooterView).textLabel?.textColor = .preferredFioriColor(forStyle: .map1)
-//    }
-    
-//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-//        let view = UIView()
-//        view.backgroundColor = UIColor.clear
-//        let label = UILabel()
-//        label.textColor = .preferredFioriColor(forStyle: .map1)
-//        if section == 0 {
-//            label.text = "Addresses"
-//        } else {
-//            label.text = "Schools"
-//        }
-//        view.addSubview(label)
-//        return view
-//    }
-
     
     func numberOfSections(in tableView: UITableView) -> Int {
         if tableView == self.detailPanel.searchResults.tableView {
@@ -579,6 +545,10 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
         } else {
             if indexPath.section == 0 {
                 let searchCell = tableView.dequeueReusableCell(withIdentifier: FUIObjectTableViewCell.reuseIdentifier, for: indexPath) as! FUIObjectTableViewCell
+                if indexPath.row >= searchResults.count {
+                    //Something went wrong...
+                    return searchCell
+                }
                 let searchResult = searchResults[indexPath.row]
                 return setSearchCell(cell: searchCell, searchResult: searchResult)
             } else {
@@ -642,12 +612,6 @@ extension MainVC: UISearchBarDelegate {
         filterSchoolPins(searchText)
     }
     
-//    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-//        if let searchText = searchBar.searchTextField.text, searchText != "" {
-//            searchForAddreses(searchText)
-//        }
-//    }
-    
 }
 extension MainVC: MKLocalSearchCompleterDelegate {
     
@@ -658,6 +622,7 @@ extension MainVC: MKLocalSearchCompleterDelegate {
     
     func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
         // handle error
+        print(error)
     }
     
 }

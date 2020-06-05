@@ -23,6 +23,7 @@ class SchoolPin: NSObject, MKAnnotation {
     let school: School
     var offers = [Offer]()
     var isOfferAvailableToday: Bool {
+        //Filter out all unavailable offers
         let availableOffers = offers.filter {
             $0.isAvailableToday
         }

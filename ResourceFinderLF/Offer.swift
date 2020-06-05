@@ -94,21 +94,18 @@ class Offer {
         if let weekDay = nowComp.weekday,
             let availableWeekDay = weekAvailablility[weekDay - 1],
             availableWeekDay == true {
+            //Todays weekday is true in weekAvailability array
             let df = DateFormatter()
             df.dateFormat = "HH:mm:ss"
+            //Convert date to comparable string
             let nowStr = df.string(from: now)
             if let toStr = self.to {
-                let res = nowStr < toStr 
-                return res
+                //Return if now is earlier than offers end time
+                return nowStr < toStr
             }
         }
         return false
     }
-//    var isOfferExpired: Bool {
-//        let today = Date()
-//        
-//        return false
-//    }
     
     init(id: String, addressId: String, type: String) {
         self.id = id
