@@ -2,6 +2,8 @@
 
 The Resource Finder app assists students and families across the States with finding nearby resouces such as food or financial assistance. In response to COVID-19, SAP and GENYOUth partnered to provide data on schools and other institutions providing assistance. This iOS app uses that data to connect users with those institutions by leveraging the SAP iOS SDK, MAPKit, and location services. 
 
+![resource-finder-full](https://user-images.githubusercontent.com/22245230/127927519-68be664d-a43a-4bdb-886a-8ddd51fa095b.gif)
+
 ### Installation Instructions
 * In the ResourceFinderLF directory run: `pod install`
 * Then, run the app from XCode
